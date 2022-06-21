@@ -8,8 +8,18 @@ COPY package.json /usr/src/app/
 
 RUN npm config set package-lock false && \
     npm install --production && \
-    apt update && mkdir tools; cd tools https://raw.githubusercontent.com/Jenderal92/Reverse-Ip-Auto-Remove-Duplicate-Domain/main/revs.py; wget -O get.py; wget -O bot.py https://raw.githubusercontent.com/kamalkarlos/Z3ter-Bot-Auto-Upload-Shell/%23Coded-By-Capitos-Kamal/z3ter.py; wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O get.py; python2 get.py; pip2 install bs4 colorama requests termcolor \
-    apt install -y make g++ python3 && \
+    apt update && \
+    apt upgrade -y && \
+    mkdir Tools && \
+    cd Tools \
+    wget https://raw.githubusercontent.com/Jenderal92/Reverse-Ip-Auto-Remove-Duplicate-Domain/main/revs.py
+    wget -O bot.py https://raw.githubusercontent.com/kamalkarlos/Z3ter-Bot-Auto-Upload-Shell/%23Coded-By-Capitos-Kamal/z3ter.py
+    wget https://raw.githubusercontent.com/Agressiv1njector/psqli-pro/main/psqli.sh
+    wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O get.py
+    python2 get.py
+    pip2 install requests bs4 colorama bs4
+    
+    apt install -y make g++ python3 python2 && \
     npm i gritty && \
     npm cache clean --force && \
     apt remove -y make g++ python3 && \

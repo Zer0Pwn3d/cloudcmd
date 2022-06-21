@@ -13,6 +13,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16.x
+        run: npm i broken-link-checker
+        run: npm install --global wpcheck
       - name: Install Redrun
         run: npm i redrun -g
       - name: NPM Install

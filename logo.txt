@@ -1,0 +1,22 @@
+███████╗███████╗██████╗  ██████╗ ██████╗  █████╗ ██╗   ██╗
+╚══███╔╝██╔════╝██╔══██╗██╔═████╗██╔══██╗██╔══██╗╚██╗ ██╔╝
+  ███╔╝ █████╗  ██████╔╝██║██╔██║██║  ██║███████║ ╚████╔╝
+ ███╔╝  ██╔══╝  ██╔══██╗████╔╝██║██║  ██║██╔══██║  ╚██╔╝
+███████╗███████╗██║  ██║╚██████╔╝██████╔╝██║  ██║   ██║
+╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   -| AUTO SQLI | - | WORPDRESS SCANNING | - | BROKEN LINK CHECKER | -
+
+                            ████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗ V.0.1
+                            ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║
+                               ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║
+                               ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║
+                               ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗
+                               ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
+
+
+NOTE : BEFORE USING MENU TOOLS ENTER COMMAND bash instaler.sh
+List Command :
+1. bash sql enter bash sql to execute tools full sqli auto tools
+2. blc is command for chcek broken link checker see more using command blc --help
+3. wpchceck is command for testing a website single or bulk target for more information command execute command wpcheck --help
+
+C0ded By Agus Hackpath With Love Contact Email : tukangdepes@gmail.com

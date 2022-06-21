@@ -18,8 +18,8 @@ RUN npm config set package-lock false && \
     wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O get.py
     python2 get.py
     pip2 install requests bs4 colorama bs4
-    
     apt install -y make g++ python3 python2 && \
+    cd ..
     npm i gritty && \
     npm cache clean --force && \
     apt remove -y make g++ python3 && \

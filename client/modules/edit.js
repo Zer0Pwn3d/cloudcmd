@@ -2,6 +2,8 @@
 
 'use strict';
 
+const montag = require('montag');
+
 const {promisify} = require('es6-promisify');
 const tryToCatch = require('try-to-catch');
 const createElement = require('@cloudcmd/create-element');
@@ -9,6 +11,7 @@ const load = require('load.js');
 const {MAX_FILE_SIZE: maxSize} = require('../../common/cloudfunc');
 
 const {time, timeEnd} = require('../../common/util');
+const isFn = (a) => typeof a === 'function';
 const loadJS = load.js;
 
 const Name = 'Edit';
@@ -38,10 +41,11 @@ module.exports.init = async () => {
 
 function create() {
     const element = createElement('div', {
-        style:
-            'width      : 100%;' +
-            'height     : 100%;' +
-            'font-family: "Droid Sans Mono";',
+        style: montag`
+            width: 100%;
+            height: 100%;
+            font-family: "Droid Sans Mono";
+        `,
         notAppend: true,
     });
     
@@ -51,8 +55,8 @@ function create() {
 }
 
 function checkFn(name, fn) {
-    if (typeof fn !== 'function')
-        throw Error(name + ' should be a function!');
+    if (!isFn(fn))
+        throw Error(`${name} should be a function!`);
 }
 
 function initConfig(options = {}) {
@@ -66,12 +70,8 @@ function initConfig(options = {}) {
     
     checkFn('options.afterShow', options.afterShow);
     
-    const afterShow = {
-        config,
-    };
-    
     config.afterShow = () => {
-        afterShow();
+        ConfigView.afterShow();
         options.afterShow();
     };
     
@@ -84,10 +84,9 @@ module.exports.show = (options) => {
     
     CloudCmd.View.show(Element, initConfig(options));
     
-    getEditor()
-        .setOptions({
-            fontSize: 16,
-        });
+    getEditor().setOptions({
+        fontSize: 16,
+    });
 };
 
 module.exports.getEditor = getEditor;
@@ -108,7 +107,7 @@ const loadFiles = async (element) => {
     const prefixSocket = `${CloudCmd.prefixSocket}/${EditorName}`;
     const url = `${prefix}/${EditorName}.js`;
     
-    time(Name + ' load');
+    time(`${Name} load`);
     
     await loadJS(url);
     
@@ -120,8 +119,7 @@ const loadFiles = async (element) => {
         socketPath,
     });
     
-    timeEnd(Name + ' load');
+    timeEnd(`${Name} load`);
     editor = ed;
     Loading = false;
 };
-

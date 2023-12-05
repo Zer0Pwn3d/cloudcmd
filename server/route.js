@@ -16,9 +16,9 @@ const once = require('once');
 const pipe = require('pipe-io');
 const {contentType} = require('mime-types');
 
-const root = require(DIR_SERVER + 'root');
-const prefixer = require(DIR_SERVER + 'prefixer');
-const CloudFunc = require(DIR_COMMON + 'cloudfunc');
+const root = require(`${DIR_SERVER}root`);
+const prefixer = require(`${DIR_SERVER}prefixer`);
+const CloudFunc = require(`${DIR_COMMON}cloudfunc`);
 
 const Columns = require(`${DIR_SERVER}/columns`);
 
@@ -52,13 +52,17 @@ const getReadDir = (config) => {
  */
 module.exports = currify((config, options, request, response, next) => {
     const name = ponse.getPathName(request);
-    const isFS = RegExp('^/$|^' + FS).test(name);
+    const isFS = RegExp(`^/$|^${FS}`).test(name);
     
     if (!isFS)
         return next();
     
-    route({config, options, request, response})
-        .catch(next);
+    route({
+        config,
+        options,
+        request,
+        response,
+    }).catch(next);
 });
 
 module.exports._getReadDir = getReadDir;
@@ -102,10 +106,7 @@ async function route({config, options, request, response}) {
     response.setHeader('Content-Length', contentLength);
     response.setHeader('Content-Type', contentType(extname(fullPath)));
     
-    await pipe([
-        stream,
-        response,
-    ]);
+    await pipe([stream, response]);
 }
 
 /**
@@ -131,20 +132,16 @@ function indexProcessing(config, options) {
             .replace('icon-copy', 'icon-copy none');
     
     if (noContact)
-        data = data
-            .replace('icon-contact', 'icon-contact none');
+        data = data.replace('icon-contact', 'icon-contact none');
     
     if (noConfig)
-        data = data
-            .replace('icon-config', 'icon-config none');
+        data = data.replace('icon-config', 'icon-config none');
     
     if (noConsole)
-        data = data
-            .replace('icon-console', 'icon-console none');
+        data = data.replace('icon-console', 'icon-console none');
     
     if (noTerminal)
-        data = data
-            .replace('icon-terminal', 'icon-terminal none');
+        data = data.replace('icon-terminal', 'icon-terminal none');
     
     const left = rendy(Template.panel, {
         side: 'left',
@@ -204,4 +201,3 @@ function hideKeysPanel(html) {
     
     return html.replace(RegExp(from), to);
 }
-

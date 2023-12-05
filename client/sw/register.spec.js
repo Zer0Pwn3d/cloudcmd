@@ -50,7 +50,7 @@ test('sw: register: registerSW: no https', async (t, {location, navigator}) => {
     
     await registerSW();
     
-    t.notOk(register.called, 'should not call register');
+    t.notCalled(register, 'should not call register');
     t.end();
 });
 
@@ -66,7 +66,24 @@ test('sw: register: registerSW: http', async (t, {location, navigator}) => {
     
     await registerSW();
     
-    t.notOk(register.called, 'should not call register');
+    t.notCalled(register, 'should not call register');
+    t.end();
+});
+
+test('sw: register: registerSW: https self-signed', async (t, {location, navigator}) => {
+    Object.assign(location, {
+        protocol: 'https',
+        hostname: 'self-signed.badssl.com',
+    });
+    
+    const {register} = navigator.serviceWorker;
+    register.throws(Error('Cannot register service worker!'));
+    
+    const {registerSW} = reRequire('./register');
+    
+    const result = await registerSW();
+    
+    t.notOk(result, 'should not throw');
     t.end();
 });
 
@@ -97,4 +114,3 @@ test('sw: register: unregisterSW', async (t, {location, navigator}) => {
     t.calledWith(register, ['/hello/sw.js'], 'should call register');
     t.end();
 });
-

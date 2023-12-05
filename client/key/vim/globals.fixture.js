@@ -29,6 +29,8 @@ module.exports.getDOM = () => {
         getCurrentName: noop,
         setCurrentByName: noop,
         toggleSelectedFile: noop,
+        prompNewDirectory: noop,
+        promptNewFile: noop,
     };
 };
 
@@ -36,7 +38,7 @@ module.exports.getCloudCmd = () => {
     const show = () => {};
     
     return {
-        Operation:  {
+        Operation: {
             show,
         },
         
@@ -44,4 +46,3 @@ module.exports.getCloudCmd = () => {
         _config: noop,
     };
 };
-

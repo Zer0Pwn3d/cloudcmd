@@ -14,7 +14,9 @@ const cloudcmd = require('../..');
 const config = {
     auth: false,
 };
+
 const configManager = cloudcmd.createConfigManager();
+
 const {request} = require('serve-once')(cloudcmd, {
     config,
     configManager,
@@ -89,7 +91,7 @@ test('cloudcmd: markdown: no request', async (t) => {
     t.end();
 });
 
-test('cloudcmd: markdown: zip', async (t) => {
+test('cloudcmd: markdown', async (t) => {
     const configManager = cloudcmd.createConfigManager();
     const fixtureDir = join(__dirname, 'fixture');
     const config = {
@@ -101,6 +103,7 @@ test('cloudcmd: markdown: zip', async (t) => {
         config,
         configManager,
     });
+    
     const {body} = await request.get('/api/v1/markdown/markdown.md');
     
     t.equal(body, '<h1>hello</h1>\n');
@@ -119,6 +122,7 @@ test('cloudcmd: markdown: zip', async (t) => {
         config,
         configManager,
     });
+    
     const {body} = await request.get('/api/v1/markdown/markdown.zip/markdown.md');
     
     t.equal(body, '<h1>hello</h1>\n');

@@ -11,11 +11,10 @@ const WebpackBar = require('webpackbar');
 
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
-const dir = './client';
-const dirModules = './client/modules';
+const {env} = require('process');
 const modules = './modules';
-
-const {env} = process;
+const dirModules = './client/modules';
+const dir = './client';
 const {NODE_ENV} = env;
 const isDev = NODE_ENV === 'development';
 
@@ -28,6 +27,7 @@ const notEmpty = (a) => a;
 const clean = (array) => array.filter(notEmpty);
 
 const noParse = (a) => /\.spec\.js$/.test(a);
+const convertToWebpack5Externals = (fn) => (context, request, cb) => fn({context, request}, cb);
 
 const options = {
     babelrc: true,
@@ -44,18 +44,17 @@ const rules = clean([
         exclude: /node_modules/,
         loader: 'babel-loader',
         options,
-    }]);
+    },
+]);
 
 const plugins = [
     new EnvironmentPlugin({
         NODE_ENV,
     }),
-    
     new ServiceWorkerWebpackPlugin({
         entry: join(__dirname, '..', 'client', 'sw', 'sw.js'),
         excludes: ['*'],
     }),
-    
     new WebpackBar(),
 ];
 
@@ -74,25 +73,26 @@ module.exports = {
     },
     entry: {
         cloudcmd: `${dir}/cloudcmd.js`,
-        [modules + '/edit']: `${dirModules}/edit.js`,
-        [modules + '/edit-file']: `${dirModules}/edit-file.js`,
-        [modules + '/edit-file-vim']: `${dirModules}/edit-file-vim.js`,
-        [modules + '/edit-names']: `${dirModules}/edit-names.js`,
-        [modules + '/edit-names-vim']: `${dirModules}/edit-names-vim.js`,
-        [modules + '/menu']: `${dirModules}/menu.js`,
-        [modules + '/view']: `${dirModules}/view/index.js`,
-        [modules + '/help']: `${dirModules}/help.js`,
-        [modules + '/markdown']: `${dirModules}/markdown.js`,
-        [modules + '/config']: `${dirModules}/config/index.js`,
-        [modules + '/contact']: `${dirModules}/contact.js`,
-        [modules + '/upload']: `${dirModules}/upload.js`,
-        [modules + '/operation']: `${dirModules}/operation/index.js`,
-        [modules + '/konsole']: `${dirModules}/konsole.js`,
-        [modules + '/terminal']: `${dirModules}/terminal.js`,
-        [modules + '/terminal-run']: `${dirModules}/terminal-run.js`,
-        [modules + '/cloud']: `${dirModules}/cloud.js`,
-        [modules + '/user-menu']: `${dirModules}/user-menu/index.js`,
-        [modules + '/polyfill']: `${dirModules}/polyfill.js`,
+        [`${modules}/edit`]: `${dirModules}/edit.js`,
+        [`${modules}/edit-file`]: `${dirModules}/edit-file.js`,
+        [`${modules}/edit-file-vim`]: `${dirModules}/edit-file-vim.js`,
+        [`${modules}/edit-names`]: `${dirModules}/edit-names.js`,
+        [`${modules}/edit-names-vim`]: `${dirModules}/edit-names-vim.js`,
+        [`${modules}/menu`]: `${dirModules}/menu.js`,
+        [`${modules}/view`]: `${dirModules}/view/index.js`,
+        [`${modules}/help`]: `${dirModules}/help.js`,
+        [`${modules}/markdown`]: `${dirModules}/markdown.js`,
+        [`${modules}/config`]: `${dirModules}/config/index.js`,
+        [`${modules}/contact`]: `${dirModules}/contact.js`,
+        [`${modules}/upload`]: `${dirModules}/upload.js`,
+        [`${modules}/operation`]: `${dirModules}/operation/index.js`,
+        [`${modules}/konsole`]: `${dirModules}/konsole.js`,
+        [`${modules}/terminal`]: `${dirModules}/terminal.js`,
+        [`${modules}/terminal-run`]: `${dirModules}/terminal-run.js`,
+        [`${modules}/cloud`]: `${dirModules}/cloud.js`,
+        [`${modules}/user-menu`]: `${dirModules}/user-menu/index.js`,
+        [`${modules}/polyfill`]: `${dirModules}/polyfill.js`,
+        [`${modules}/command-line`]: `${dirModules}/command-line.js`,
     },
     output: {
         filename: '[name].js',
@@ -101,9 +101,7 @@ module.exports = {
         devtoolModuleFilenameTemplate,
         publicPath: '/dist/',
     },
-    externals: [
-        externals,
-    ],
+    externals: [convertToWebpack5Externals(externals)],
     module: {
         rules,
         noParse,
@@ -115,7 +113,7 @@ module.exports = {
     },
 };
 
-function externals(context, request, fn) {
+function externals({request}, fn) {
     if (!isDev)
         return fn();
     
@@ -131,4 +129,3 @@ function devtoolModuleFilenameTemplate(info) {
     const resource = info.absoluteResourcePath.replace(rootDir + sep, '');
     return `file://cloudcmd/${resource}`;
 }
-

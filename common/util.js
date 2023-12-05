@@ -1,9 +1,10 @@
 'use strict';
 
 const exec = require('execon');
+const isString = (a) => typeof a === 'string';
 
 module.exports.escapeRegExp = (str) => {
-    const isStr = typeof str === 'string';
+    const isStr = isString(str);
     
     if (isStr)
         str = str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
@@ -15,16 +16,16 @@ module.exports.escapeRegExp = (str) => {
  * get regexp from wild card
  */
 module.exports.getRegExp = (wildcard) => {
-    const escaped = '^' + wildcard // search from start of line
+    const escaped = `^${wildcard // search from start of line
         .replace(/\./g, '\\.')
         .replace(/\*/g, '.*')
-        .replace('?', '.?') + '$'; // search to end of line
+        .replace('?', '.?')}$`;
     
+    // search to end of line
     return RegExp(escaped);
 };
 
 module.exports.exec = exec;
-
 /**
  * function gets file extension
  *
@@ -32,7 +33,7 @@ module.exports.exec = exec;
  * @return ext
  */
 module.exports.getExt = (name) => {
-    const isStr = typeof name === 'string';
+    const isStr = isString(name);
     
     if (!isStr)
         return '';
@@ -57,7 +58,7 @@ module.exports.findObjByNameInArr = (array, name) => {
     if (!Array.isArray(array))
         throw Error('array should be array!');
     
-    if (typeof name !== 'string')
+    if (!isString(name))
         throw Error('name should be string!');
     
     array.some((item) => {
@@ -100,4 +101,3 @@ module.exports.time = (name) => {
 module.exports.timeEnd = (name) => {
     exec.ifExist(console, 'timeEnd', [name]);
 };
-

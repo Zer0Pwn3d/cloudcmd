@@ -2,7 +2,6 @@
 
 /* global CloudCmd */
 /* global gritty */
-
 const tryToCatch = require('try-to-catch');
 
 require('../../css/terminal.css');
@@ -15,10 +14,7 @@ const Images = require('../dom/images');
 const loadParallel = load.parallel;
 
 const {Dialog} = DOM;
-const {
-    Key,
-    config,
-} = CloudCmd;
+const {Key, config} = CloudCmd;
 
 CloudCmd.Terminal = exports;
 
@@ -94,9 +90,8 @@ function create() {
     Terminal.onKey(({domEvent}) => {
         const {keyCode, shiftKey} = domEvent;
         
-        if (shiftKey && keyCode === Key.ESC) {
+        if (shiftKey && keyCode === Key.ESC)
             hide();
-        }
     });
     
     Socket.on('connect', exec.with(authCheck, socket));
@@ -123,4 +118,3 @@ function show() {
         },
     });
 }
-

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import {promisify} from 'util';
-
+import {promisify} from 'node:util';
 import tryToCatch from 'try-to-catch';
 import {createSimport} from 'simport';
 import minor from 'minor';
 import _place from 'place';
 import rendy from 'rendy';
 import shortdate from 'shortdate';
+import process from 'node:process';
 
 const simport = createSimport(import.meta.url);
 const place = promisify(_place);
@@ -20,8 +20,9 @@ async function main() {
     const history = '## Version history\n\n';
     const link = '//github.com/coderaiser/cloudcmd/releases/tag/';
     const template = '- *{{ date }}*, ' +
-                      '**[v{{ version }}]' +
-                      '(' + link + 'v{{ version }})**\n';
+        '**[v{{ version }}]' +
+        '(' + link +
+        'v{{ version }})**\n';
     
     const {version} = Info;
     
@@ -34,8 +35,8 @@ async function main() {
     await replaceVersion('HELP.md', version, versionNew);
     
     const historyNew = history + rendy(template, {
-        date    : shortdate(),
-        version : versionNew,
+        date: shortdate(),
+        version: versionNew,
     });
     
     await replaceVersion('HELP.md', history, historyNew);
@@ -47,7 +48,7 @@ async function replaceVersion(name, version, versionNew) {
     if (error)
         return console.error(error);
     
-    console.log('done: ' + name);
+    console.log(`done: ${name}`);
 }
 
 async function cl() {
@@ -71,4 +72,3 @@ function getVersionNew(last, match) {
     
     return last.substr(3);
 }
-

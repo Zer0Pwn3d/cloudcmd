@@ -47,4 +47,3 @@ function previous(index, length) {
     
     return --index;
 }
-

@@ -1,15 +1,15 @@
 'use strict';
 
-const DIR_SERVER = __dirname + '/';
+const DIR_SERVER = `${__dirname}/`;
 const DIR_COMMON = '../common/';
 const path = require('path');
 
 const fs = require('fs');
 const Emitter = require('events');
 const {homedir} = require('os');
-const exit = require(DIR_SERVER + 'exit');
+const exit = require(`${DIR_SERVER}exit`);
 
-const CloudFunc = require(DIR_COMMON + 'cloudfunc');
+const CloudFunc = require(`${DIR_COMMON}cloudfunc`);
 const currify = require('currify');
 
 const wraptile = require('wraptile');
@@ -21,7 +21,7 @@ const jju = require('jju');
 const writejson = require('writejson');
 const tryCatch = require('try-catch');
 const criton = require('criton');
-const DIR = DIR_SERVER + '../';
+const DIR = `${DIR_SERVER}../`;
 const HOME = homedir();
 
 const resolve = Promise.resolve.bind(Promise);
@@ -107,15 +107,16 @@ function createConfig({configPath} = {}) {
     };
     
     configManager.unsubscribe = (fn) => {
-        // replace to off on node v10
-        changeEmitter.removeListener('change', fn);
+        changeEmitter.off('change', fn);
     };
     
     return configManager;
 }
 
 const write = (filename, config) => {
-    return writejson(filename, config('*'), {mode: 0o600});
+    return writejson(filename, config('*'), {
+        mode: 0o600,
+    });
 };
 
 function _connection(manage, socket) {
@@ -137,7 +138,8 @@ function _connection(manage, socket) {
             socket.emit('log', data);
         };
         
-        manage.write()
+        manage
+            .write()
             .then(send)
             .catch(emit(socket, 'err'));
     });
@@ -146,11 +148,12 @@ function _connection(manage, socket) {
 function listen(manage, sock, auth) {
     const prefix = manage('prefixSocket');
     
-    sock.of(prefix + '/config')
+    sock
+        .of(`${prefix}/config`)
         .on('connection', (socket) => {
             if (!manage('auth'))
                 return connection(manage, socket);
-            
+        
             const reject = () => socket.emit('reject');
             socket.on('auth', auth(connectionWraped(manage, socket), reject));
         });
@@ -244,4 +247,3 @@ function cryptoPass(manage, json) {
         password,
     }];
 }
-

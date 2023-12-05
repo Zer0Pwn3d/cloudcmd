@@ -1,7 +1,6 @@
 'use strict';
 
 /* global CloudCmd */
-
 const exec = require('execon');
 const tryToCatch = require('try-to-catch');
 const loadJS = require('load.js').js;
@@ -25,25 +24,24 @@ module.exports = function loadModule(params) {
     if (CloudCmd[name])
         return;
     
-    CloudCmd[name] = () => {
+    CloudCmd[name] = async () => {
         exec(doBefore);
         
-        const {prefix} = CloudCmd;
-        const pathFull = prefix + CloudCmd.DIRCLIENT_MODULES + path + '.js';
+        const {DIR_MODULES} = CloudCmd;
+        const pathFull = `${DIR_MODULES}/${path}.js`;
         
-        return loadJS(pathFull).then(async () => {
-            const newModule = async (f) => f && f();
-            const module = CloudCmd[name];
-            
-            Object.assign(newModule, module);
-            
-            CloudCmd[name] = newModule;
-            
-            CloudCmd.log('init', name);
-            await module.init();
-            
-            return newModule;
-        });
+        await loadJS(pathFull);
+        const newModule = async (f) => f && f();
+        const module = CloudCmd[name];
+        
+        Object.assign(newModule, module);
+        
+        CloudCmd[name] = newModule;
+        CloudCmd.log('init', name);
+        
+        await module.init();
+        
+        return newModule;
     };
     
     CloudCmd[name].show = async (...args) => {
@@ -55,7 +53,6 @@ module.exports = function loadModule(params) {
         if (e)
             return console.error(e);
         
-        await a.show(...args);
+        return await a.show(...args);
     };
 };
-

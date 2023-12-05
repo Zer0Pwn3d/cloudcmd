@@ -2,7 +2,7 @@
 
 const currify = require('currify');
 
-const isType = currify((type, object, name) => typeof object[name] === type);
+const isType = currify((type, object, name) => type === typeof object[name]);
 
 const isBool = isType('boolean');
 
@@ -11,8 +11,7 @@ module.exports.getElementByName = getElementByName;
 function getElementByName(selector, element) {
     const str = `[data-name="js-${selector}"]`;
     
-    return element
-        .querySelector(str);
+    return element.querySelector(str);
 }
 
 module.exports.getName = (element) => {
@@ -74,4 +73,3 @@ module.exports.setValue = (name, value, element) => {
         break;
     }
 };
-

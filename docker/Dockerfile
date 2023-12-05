@@ -22,4 +22,3 @@ ENV cloudcmd_open false
 EXPOSE 8000
 
 ENTRYPOINT ["/usr/src/app/bin/cloudcmd.mjs"]
-

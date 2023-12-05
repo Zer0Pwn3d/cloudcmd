@@ -1,7 +1,6 @@
 'use strict';
 
 /* global CloudCmd, DOM, io */
-
 require('../../../css/config.css');
 
 const rendy = require('rendy');
@@ -22,6 +21,7 @@ const {getTitle} = require('../../../common/cloudfunc');
 const {Dialog, setTitle} = DOM;
 
 const Name = 'Config';
+
 CloudCmd[Name] = module.exports;
 
 const loadSocket = promisify(DOM.loadSocket);
@@ -57,17 +57,14 @@ module.exports.init = async () => {
     [Template] = await Promise.all([
         Files.get('config-tmpl'),
         loadSocket(),
-        loadCSS(prefix + '/dist/config.css'),
+        loadCSS(`${prefix}/dist/config.css`),
         CloudCmd.View(),
     ]);
     
     initSocket();
 };
 
-const {
-    config,
-    Key,
-} = CloudCmd;
+const {config, Key} = CloudCmd;
 
 let Element;
 
@@ -77,24 +74,20 @@ function getHost() {
         origin,
         protocol,
     } = location;
-    const href = origin || `${protocol}//${host}`;
     
-    return href;
+    return origin || `${protocol}//${host}`;
 }
 
 function initSocket() {
     const href = getHost();
-    const {
-        prefixSocket,
-        prefix,
-    } = CloudCmd;
+    const {prefixSocket, prefix} = CloudCmd;
     
     const ONE_MINUTE = 60 * 1000;
     
     const socket = io.connect(href + prefixSocket + '/config', {
         reconnectionAttempts: Infinity,
         reconnectionDelay: ONE_MINUTE,
-        path: prefix + '/socket.io',
+        path: `${prefix}/socket.io`,
     });
     
     const save = (data) => {
@@ -148,15 +141,15 @@ async function fillTemplate() {
         ...obj
     } = input.convert(config);
     
-    obj[editor + '-selected'] = 'selected';
-    obj[packer + '-selected'] = 'selected';
-    obj[columns + '-selected'] = 'selected';
+    obj[`${editor}-selected`] = 'selected';
+    obj[`${packer}-selected`] = 'selected';
+    obj[`${columns}-selected`] = 'selected';
     obj.configAuth = configAuth ? '' : 'hidden';
     
     const innerHTML = rendy(Template, obj);
     
     Element = createElement('form', {
-        className   : 'config',
+        className: 'config',
         innerHTML,
     });
     
@@ -173,11 +166,13 @@ async function fillTemplate() {
     const getTarget = ({target}) => target;
     const handleChange = squad(onChange, getTarget);
     
-    Array.from(inputs)
+    Array
+        .from(inputs)
         .map(addKey(onKey))
         .map(addChange(handleChange));
     
     const autoSize = true;
+    
     CloudCmd.View.show(Element, {
         autoSize,
         afterShow,
@@ -246,4 +241,3 @@ async function onKey({keyCode, target}) {
         return await onChange(target);
     }
 }
-

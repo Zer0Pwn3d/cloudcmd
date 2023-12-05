@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 const codegen = require('codegen.macro');
 const tryToCatch = require('try-to-catch');
 const currify = require('currify');
@@ -97,4 +98,3 @@ async function addToCache(request, response) {
     const cache = await caches.open(NAME);
     return cache.put(request, response);
 }
-

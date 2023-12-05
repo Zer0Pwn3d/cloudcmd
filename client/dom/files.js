@@ -1,7 +1,6 @@
 'use strict';
 
 /* global CloudCmd */
-
 const itype = require('itype');
 const {promisify} = require('es6-promisify');
 
@@ -13,7 +12,7 @@ const FILES_JSON = 'config|modules';
 const FILES_HTML = 'file|path|link|pathLink|media';
 const FILES_HTML_ROOT = 'view/media-tmpl|config-tmpl|upload';
 const DIR_HTML = '/tmpl/';
-const DIR_HTML_FS = DIR_HTML + 'fs/';
+const DIR_HTML_FS = `${DIR_HTML}fs/`;
 const DIR_JSON = '/json/';
 const timeout = getTimeoutOnce(2000);
 
@@ -49,6 +48,7 @@ function getModule(name) {
         return getConfig();
     
     const path = getPath(name, isHTML, isJSON);
+    
     return getSystemFile(path);
 }
 
@@ -72,7 +72,7 @@ function getPath(name, isHTML, isJSON) {
 }
 
 function showError(name) {
-    const str = 'Wrong file name: ' + name;
+    const str = `Wrong file name: ${name}`;
     const error = Error(str);
     
     throw error;
@@ -137,4 +137,3 @@ function getTimeoutOnce(time) {
         }, time);
     };
 }
-

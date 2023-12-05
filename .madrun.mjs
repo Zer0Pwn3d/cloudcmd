@@ -2,19 +2,22 @@ import {
     run,
     cutEnv,
 } from 'madrun';
+import process from 'node:process';
 
 const testEnv = {
     THREAD_IT_COUNT: 0,
+    SUPERTAPE_TIMEOUT: 7000,
 };
 
-const is17 = /^v1[78]/.test(process.version);
+const is17 = /^v1[789]/.test(process.version);
+const is20 = process.version.startsWith('v2');
 
 // fix for ERR_OSSL_EVP_UNSUPPORTED on node v17
 // flag '--openssl-legacy-provider' not supported
 // on earlier version of node.js
 //
 // https://stackoverflow.com/a/69746937/4536327
-const buildEnv = is17 && {
+const buildEnv = (is17 || is20) && {
     NODE_OPTIONS: '--openssl-legacy-provider',
 };
 
@@ -25,16 +28,15 @@ export default {
     }),
     'build:start': () => run(['build:client', 'start']),
     'build:start:dev': () => run(['build:client:dev', 'start:dev']),
-    'lint:all': () => run(['lint:progress', 'spell']),
+    'lint:all': () => run('lint:progress'),
     'lint': () => 'putout .',
     'lint:progress': () => run('lint', '-f progress'),
     'watch:lint': () => 'nodemon -w client -w server -w test -w common -w .webpack -x "putout -s"',
     'fresh:lint': () => run('lint', '--fresh'),
     'lint:fresh': () => run('lint', '--fresh'),
-    'spell': () => 'yaspeller . || true',
     'fix:lint': () => run('lint', '--fix'),
     'lint:stream': () => run('lint', '-f stream'),
-    'test': () => [testEnv, `tape --no-check-duplicates 'test/**/*.js' '{client,static,common,server}/**/*.spec.js' -f fail`],
+    'test': () => [testEnv, `tape 'test/**/*.js' '{client,static,common,server}/**/*.spec.js' -f fail`],
     'test:client': () => `tape 'test/client/**/*.js'`,
     'test:server': () => `tape 'test/**/*.js' 'server/**/*.spec.js' 'common/**/*.spec.js'`,
     'wisdom': () => run(['lint:all', 'build', 'test']),
@@ -57,6 +59,7 @@ export default {
     'watch:test:server': async () => `nodemon -w client -w test/client -x ${await run('test:server')}`,
     'watch:coverage': async () => [testEnv, `nodemon -w server -w test -w common -x ${await cutEnv('coverage')}`],
     'build': async () => run('6to5:*'),
+    'build:dev': async () => run('build:client:dev'),
     'build:client': () => run('6to5:client'),
     'build:client:dev': () => run('6to5:client:dev'),
     'heroku-postbuild': () => run('6to5:client'),

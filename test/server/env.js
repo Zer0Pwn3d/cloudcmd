@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 const test = require('supertape');
 const env = require('../../server/env');
 
@@ -38,6 +39,7 @@ test('env: bool: true', (t) => {
 
 test('env: bool: undefined', (t) => {
     const {cloudcmd_terminal} = process.env;
+    
     process.env.cloudcmd_terminal = undefined;
     
     t.notOk(env.bool('terminal'), 'should be undefined');
@@ -45,4 +47,3 @@ test('env: bool: undefined', (t) => {
     process.env.cloudcmd_terminal = cloudcmd_terminal;
     t.end();
 });
-

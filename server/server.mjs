@@ -1,20 +1,18 @@
 import cloudcmd from './cloudcmd.js';
-
-import http from 'http';
-import {promisify} from 'util';
+import http from 'node:http';
+import {promisify} from 'node:util';
 import currify from 'currify';
 import squad from 'squad';
 import tryToCatch from 'try-to-catch';
 import wraptile from 'wraptile';
 import compression from 'compression';
 import threadIt from 'thread-it';
-
 import exit from './exit.js';
 import opn from 'open';
-
 import express from 'express';
 import {Server} from 'socket.io';
 import tryRequire from 'tryrequire';
+import process from 'node:process';
 
 const bind = (f, self) => f.bind(self);
 
@@ -25,6 +23,7 @@ const shutdown = wraptile(async (promises) => {
     threadIt.terminate();
     process.exit(0);
 });
+
 const promisifySelf = squad(promisify, bind);
 
 const exitPort = two(exit, 'cloudcmd --port: %s');
@@ -32,12 +31,9 @@ const logger = tryRequire('morgan');
 
 export default async (options, config) => {
     const prefix = config('prefix');
-    const port = process.env.PORT /* c9           */
-                 || config('port');
+    const port = process.env.PORT /* c9           */ || config('port');
     
-    const ip = process.env.IP /* c9           */
-                || config('ip')
-                || '0.0.0.0';
+    const ip = process.env.IP /* c9           */ || config('ip') || '0.0.0.0';
     
     const app = express();
     const server = http.createServer(app);
@@ -46,7 +42,7 @@ export default async (options, config) => {
         app.use(logger('dev'));
     
     if (prefix)
-        app.get('/', (req, res) => res.redirect(prefix + '/'));
+        app.get('/', (req, res) => res.redirect(`${prefix}/`));
     
     const socketServer = new Server(server, {
         path: `${prefix}/socket.io`,
@@ -87,4 +83,3 @@ export default async (options, config) => {
     if (openError)
         console.error('cloudcmd --open:', openError.message);
 };
-

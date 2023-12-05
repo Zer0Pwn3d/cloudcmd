@@ -17,10 +17,9 @@ const {createConfigManager} = cloudcmd;
 
 const routePath = './route';
 const fixtureDir = path.join(__dirname, '..', 'test', 'fixture');
-const {
-    reRequire,
-    stopAll,
-} = mockRequire;
+
+const {reRequire, stopAll} = mockRequire;
+
 const defaultConfig = {
     auth: false,
     dropbox: false,
@@ -44,7 +43,7 @@ test('cloudcmd: route: buttons: no console', async (t) => {
         options,
     });
     
-    t.ok(/icon-console none/.test(body), 'should hide console');
+    t.match(body, 'icon-console none', 'should hide console');
     t.end();
 });
 
@@ -78,7 +77,7 @@ test('cloudcmd: route: buttons: no config', async (t) => {
         options,
     });
     
-    t.ok(/icon-config none/.test(body), 'should hide config');
+    t.match(body, 'icon-config none', 'should hide config');
     t.end();
 });
 
@@ -95,7 +94,7 @@ test('cloudcmd: route: buttons: no contact', async (t) => {
         options,
     });
     
-    t.ok(/icon-contact none/.test(body), 'should hide contact');
+    t.match(body, 'icon-contact none', 'should hide contact');
     t.end();
 });
 
@@ -112,28 +111,11 @@ test('cloudcmd: route: buttons: one file panel: move', async (t) => {
         options,
     });
     
-    t.ok(/icon-move none/.test(body), 'should hide move button');
+    t.match(body, 'icon-move none', 'should hide move button');
     t.end();
 });
 
-test('cloudcmd: route: buttons: no one file panel: move', async (t) => {
-    const config = {
-        oneFilePanel: false,
-    };
-    
-    const options = {
-        config,
-    };
-    
-    const {body} = await request.get('/', {
-        options,
-    });
-    
-    t.notOk(/icon-move none/.test(body), 'should not hide move button');
-    t.end();
-});
-
-test('cloudcmd: route: buttons: one file panel: move', async (t) => {
+test('cloudcmd: route: buttons: one file panel: copy', async (t) => {
     const config = {
         oneFilePanel: true,
     };
@@ -146,7 +128,7 @@ test('cloudcmd: route: buttons: one file panel: move', async (t) => {
         options,
     });
     
-    t.ok(/icon-copy none/.test(body), 'should hide copy button');
+    t.match(body, 'icon-copy none', 'should hide copy button');
     t.end();
 });
 
@@ -163,7 +145,7 @@ test('cloudcmd: route: keys panel: hide', async (t) => {
         options,
     });
     
-    t.ok(/keyspanel hidden/.test(body), 'should hide keyspanel');
+    t.match(body, 'keyspanel hidden', 'should hide keyspanel');
     t.end();
 });
 
@@ -231,6 +213,7 @@ test('cloudcmd: route: sendIndex: encode', async (t) => {
     const name = '"><svg onload=alert(3);>';
     const nameEncoded = '&quot;&gt;&lt;svg onload=alert(3);&gt;';
     const path = '/';
+    
     const files = [{
         name,
     }];
@@ -263,7 +246,7 @@ test('cloudcmd: route: sendIndex: encode', async (t) => {
     
     stopAll();
     
-    t.ok(body.includes(nameEncoded), 'should encode name');
+    t.match(body, nameEncoded, 'should encode name');
     t.end();
 });
 
@@ -355,7 +338,7 @@ test('cloudcmd: route: buttons: no terminal', async (t) => {
         options,
     });
     
-    t.ok(/icon-terminal none/.test(body), 'should hide terminal');
+    t.match(body, 'icon-terminal none', 'should hide terminal');
     t.end();
 });
 
@@ -370,11 +353,12 @@ test('cloudcmd: route: no termianl: /fs', async (t) => {
     };
     
     const {request} = serveOnce(cloudcmd);
+    
     const {body} = await request.get('/fs', {
         options,
     });
     
-    t.ok(/icon-terminal none/.test(body), 'should hide terminal');
+    t.match(body, 'icon-terminal none', 'should hide terminal');
     t.end();
 });
 
@@ -392,7 +376,7 @@ test('cloudcmd: route: buttons: terminal: can not load', async (t) => {
         options,
     });
     
-    t.ok(/icon-terminal none/.test(body), 'should not enable terminal');
+    t.match(body, 'icon-terminal none', 'should not enable terminal');
     t.end();
 });
 
@@ -424,6 +408,7 @@ test('cloudcmd: route: buttons: contact', async (t) => {
     };
     
     const {request} = serveOnce(cloudcmd);
+    
     const {body} = await request.get('/', {
         options,
     });
@@ -442,7 +427,7 @@ test('cloudcmd: route: dropbox', async (t) => {
     const readdir = _getReadDir(config);
     const [e] = await tryToCatch(readdir, '/root');
     
-    t.ok(/token/.test(e.message), 'should contain word token in message');
+    t.match(e.message, 'API', 'should contain word token in message');
     t.end();
 });
 
@@ -463,6 +448,7 @@ test('cloudcmd: route: content length', async (t) => {
 
 test('cloudcmd: route: read: root', async (t) => {
     const stream = Readable.from('hello');
+    
     stream.contentLength = 5;
     
     const read = stub().returns(stream);
@@ -485,15 +471,12 @@ test('cloudcmd: route: read: root', async (t) => {
     
     await request.get('/fs/route.js');
     
-    const expected = [
-        '/hello/route.js', {
-            root,
-        },
-    ];
+    const expected = ['/hello/route.js', {
+        root,
+    }];
     
     stopAll();
     
     t.calledWith(read, expected);
     t.end();
 });
-

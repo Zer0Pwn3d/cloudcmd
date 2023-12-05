@@ -4,9 +4,10 @@ const tryCatch = require('try-catch');
 
 const exit = require('./exit');
 const columns = require('./columns');
+const isString = (a) => typeof a === 'string';
 
 module.exports.root = (dir, config) => {
-    if (typeof dir !== 'string')
+    if (!isString(dir))
         throw Error('dir should be a string');
     
     if (dir === '/')
@@ -50,4 +51,3 @@ module.exports.columns = (type) => {
     if (!all.includes(type))
         exit(`cloudcmd --columns: can be only one of: ${names}`);
 };
-

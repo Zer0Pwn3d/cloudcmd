@@ -9,15 +9,14 @@ const threadIt = require('thread-it');
 const {read} = require('redzip');
 
 const root = require('../root');
-
+const isString = (a) => typeof a === 'string';
 const parse = threadIt(join(__dirname, 'worker'));
 
 threadIt.init();
-
 // warm up
 parse('');
 
-const DIR_ROOT = __dirname + '/../../';
+const DIR_ROOT = `${__dirname}/../../`;
 
 module.exports = callbackify(async (name, rootDir, request) => {
     check(name, request);
@@ -57,10 +56,9 @@ async function onPUT(request) {
 }
 
 function check(name, request) {
-    if (typeof name !== 'string')
+    if (!isString(name))
         throw Error('name should be string!');
     
     if (!request)
         throw Error('request could not be empty!');
 }
-

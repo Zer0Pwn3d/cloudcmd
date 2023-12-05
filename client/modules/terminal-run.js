@@ -1,7 +1,6 @@
 'use strict';
 
 /* global CloudCmd, gritty */
-
 const {promisify} = require('es6-promisify');
 const tryToCatch = require('try-to-catch');
 const fullstore = require('fullstore');
@@ -14,10 +13,7 @@ const DOM = require('../dom');
 const Images = require('../dom/images');
 
 const {Dialog} = DOM;
-const {
-    Key,
-    config,
-} = CloudCmd;
+const {Key, config} = CloudCmd;
 
 CloudCmd.TerminalRun = exports;
 
@@ -56,7 +52,7 @@ module.exports.init = async () => {
 
 module.exports.show = promisify((options = {}, fn) => {
     if (!Loaded)
-        return;
+        return fn(null, -1);
     
     if (!config('terminal'))
         return;
@@ -127,9 +123,8 @@ function create(createOptions) {
         if (commandExit)
             hide();
         
-        if (shiftKey && keyCode === Key.ESC) {
+        if (shiftKey && keyCode === Key.ESC)
             hide();
-        }
     });
     
     Socket.on('exit', (code) => {
@@ -152,4 +147,3 @@ function authCheck(spawn) {
         Dialog.alert('Wrong credentials!');
     });
 }
-

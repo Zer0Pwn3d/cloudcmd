@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 const format = require('format-io');
 
 const {version} = require('../../package');
@@ -14,4 +15,3 @@ module.exports = (prefix) => ({
     prefix,
     memory: getMemory(),
 });
-

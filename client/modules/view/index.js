@@ -1,6 +1,6 @@
-'use strict';
-
 /* global CloudCmd, DOM */
+
+'use strict';
 
 require('../../../css/view.css');
 
@@ -15,6 +15,7 @@ const createElement = require('@cloudcmd/create-element');
 
 const {time} = require('../../../common/util');
 const {FS} = require('../../../common/cloudfunc');
+
 const {
     isImage,
     isAudio,
@@ -26,7 +27,7 @@ const Events = require('../../dom/events');
 const Images = require('../../dom/images');
 
 const {encode} = require('../../../common/entity');
-
+const isString = (a) => typeof a === 'string';
 const {assign} = Object;
 const {isArray} = Array;
 
@@ -49,6 +50,7 @@ module.exports.hide = hide;
 let Loading = false;
 
 const Name = 'View';
+
 CloudCmd[Name] = module.exports;
 
 const Info = DOM.CurrentInfo;
@@ -82,6 +84,7 @@ const Config = {
         title: {},
     },
 };
+
 module.exports._Config = Config;
 
 module.exports.init = async () => {
@@ -92,7 +95,10 @@ module.exports.init = async () => {
         'contextmenu',
     ];
     
-    events.forEach(addEvent(Overlay, onOverlayClick));
+    events.forEach(addEvent(
+        Overlay,
+        onOverlayClick,
+    ));
 };
 
 async function show(data, options = {}) {
@@ -236,6 +242,7 @@ function initConfig(options) {
         }
         
         const fn = config[name];
+        
         config[name] = series(fn, item);
     }
     
@@ -253,21 +260,22 @@ function viewImage(path, prefixURL) {
         title: encode(basename(path)),
     });
     
-    const names = Info.files
+    const names = Info
+        .files
         .map(DOM.getCurrentPath)
         .filter(isSupportedImage);
     
-    const titles = names
-        .map(makeTitle);
+    const titles = names.map(makeTitle);
     
     const index = names.indexOf(Info.path);
+    
     const imageConfig = {
         index,
-        autoSize    : true,
-        arrows      : true,
-        keys        : true,
-        helpers     : {
-            title   : {},
+        autoSize: true,
+        arrows: true,
+        keys: true,
+        helpers: {
+            title: {},
         },
     };
     
@@ -309,7 +317,7 @@ async function getMediaElement(src) {
 }
 
 function check(src) {
-    if (typeof src !== 'string')
+    if (!isString(src))
         throw Error('src should be a string!');
 }
 
@@ -318,12 +326,12 @@ function check(src) {
  * @callback   -  executes, when everything loaded
  */
 async function loadAll() {
-    const {prefix} = CloudCmd;
+    const {DIR_DIST} = CloudCmd;
     
-    time(Name + ' load');
+    time(`${Name} load`);
     
     Loading = true;
-    await loadCSS(`${prefix}/dist/view.css`);
+    await loadCSS(`${DIR_DIST}/view.css`);
     Loading = false;
 }
 
@@ -342,10 +350,7 @@ function setCurrentByPosition(position) {
     if (!element)
         return;
     
-    const {
-        files,
-        filesPassive,
-    } = Info;
+    const {files, filesPassive} = Info;
     
     const isFiles = files.includes(element);
     const isFilesPassive = filesPassive.includes(element);
@@ -365,4 +370,3 @@ function listener({keyCode}) {
     if (keyCode === Key.ESC)
         hide();
 }
-

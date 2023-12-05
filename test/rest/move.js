@@ -11,8 +11,8 @@ const serveOnce = require('serve-once');
 const {reRequire, stopAll} = mockRequire;
 
 const cloudcmdPath = '../../';
-const dir = cloudcmdPath + 'server/';
-const restPath = dir + 'rest';
+const dir = `${cloudcmdPath}server/`;
+const restPath = `${dir}rest`;
 
 const {assign} = Object;
 
@@ -51,9 +51,7 @@ test('cloudcmd: rest: move', async (t) => {
     const files = {
         from: '/fixture/',
         to: '/fixture/tmp/',
-        names: [
-            'move.txt',
-        ],
+        names: ['move.txt'],
     };
     
     const {body} = await request.put(`/api/v1/move`, {

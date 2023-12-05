@@ -11,10 +11,7 @@ const {FS} = require('../../common/cloudfunc');
 const {getIdBySrc} = require('../dom/load');
 const RESTful = require('../dom/rest');
 
-const {
-    config,
-    Key,
-} = CloudCmd;
+const {config, Key} = CloudCmd;
 
 const {
     Buffer,
@@ -36,15 +33,18 @@ module.exports.ENABLED = false;
 CloudCmd.Menu = exports;
 
 module.exports.init = () => {
-    const {
-        isAuth,
-        menuDataFile,
-    } = getFileMenuData();
+    const {isAuth, menuDataFile} = getFileMenuData();
     
     const fm = DOM.getFM();
     const menuData = getMenuData(isAuth);
-    const options = getOptions({type: 'context'});
-    const optionsFile = getOptions({type: 'file'});
+    
+    const options = getOptions({
+        type: 'context',
+    });
+    
+    const optionsFile = getOptions({
+        type: 'file',
+    });
     
     MenuContext = supermenu(fm, options, menuData);
     MenuContextFile = supermenu(fm, optionsFile, menuDataFile);
@@ -105,9 +105,9 @@ function getOptions({type}) {
     }
     
     const options = {
-        icon        : true,
-        beforeClose : Key.setBind,
-        beforeShow  : exec.with(beforeShow, func),
+        icon: true,
+        beforeClose: Key.setBind,
+        beforeShow: exec.with(beforeShow, func),
         beforeClick,
         name,
     };
@@ -196,9 +196,8 @@ function isPath(x, y) {
     
     const el = document.elementFromPoint(x, y);
     const elements = panel.querySelectorAll('[data-name="js-path"] *');
-    const is = ~[].indexOf.call(elements, el);
     
-    return is;
+    return ~[].indexOf.call(elements, el);
 }
 
 function beforeShow(callback, params) {
@@ -239,7 +238,7 @@ async function _uploadTo(nameModule) {
     const {name} = Info;
     
     CloudCmd.execFromModule(nameModule, 'uploadFile', name, data);
-    CloudCmd.log('Uploading to ' + name + '...');
+    CloudCmd.log(`Uploading to ${name}...`);
 }
 
 function uploadFromCloud() {
@@ -252,7 +251,9 @@ function uploadFromCloud() {
         if (e)
             return;
         
-        await CloudCmd.refresh({currentName});
+        await CloudCmd.refresh({
+            currentName,
+        });
     });
 }
 
@@ -275,7 +276,7 @@ function download(type) {
         const isDir = DOM.isCurrentIsDir(file);
         const path = DOM.getCurrentPath(file);
         
-        CloudCmd.log('downloading file ' + path + '...');
+        CloudCmd.log(`downloading file ${path}...`);
         /*
           * if we send ajax request -
           * no need in hash so we escape #
@@ -292,7 +293,7 @@ function download(type) {
             src = prefixURL + FS + encodedPath + '?download';
         
         const element = createElement('iframe', {
-            id : id + '-' + date,
+            id: id + '-' + date,
             async: false,
             className: 'hidden',
             src,
@@ -321,10 +322,7 @@ function getCurrentPosition() {
 }
 
 function listener(event) {
-    const {
-        F9,
-        ESC,
-    } = Key;
+    const {F9, ESC} = Key;
     
     const key = event.keyCode;
     const isBind = Key.isBind();

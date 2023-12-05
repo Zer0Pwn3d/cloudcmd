@@ -15,7 +15,7 @@ test('user-menu: parse-error', (t) => {
     t.end();
 });
 
-test('user-menu: parse-error', (t) => {
+test('user-menu: parse-error: stack', (t) => {
     const stack = `
         ReferenceError: s is not defined
         at eval (eval at module.exports (get-user-menu.js:NaN), <anonymous>:1:2)
@@ -24,7 +24,10 @@ test('user-menu: parse-error', (t) => {
         at AsyncFunction.show (index.js:67)
     `;
     
-    const result = parseError({stack});
+    const result = parseError({
+        stack,
+    });
+    
     const expected = [1, 2];
     
     t.deepEqual(result, expected);

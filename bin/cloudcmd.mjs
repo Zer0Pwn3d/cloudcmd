@@ -1,17 +1,16 @@
 #!/usr/bin/env node
 
-import {createRequire} from 'module';
-import {promisify} from 'util';
+import {createRequire} from 'node:module';
+import {promisify} from 'node:util';
 import tryToCatch from 'try-to-catch';
 import {createSimport} from 'simport';
 import parse from 'yargs-parser';
-
+import process from 'node:process';
 import exit from '../server/exit.js';
 import {
     createConfig,
     configPath,
 } from '../server/config.js';
-
 import env from '../server/env.js';
 import prefixer from '../server/prefixer.js';
 
@@ -100,29 +99,29 @@ const yargsOptions = {
         'dropbox',
     ],
     default: {
-        'server'      : true,
-        'name'        : choose(env('name'), config('name')),
-        'auth'        : choose(env.bool('auth'), config('auth')),
-        'port'        : config('port'),
-        'online'      : config('online'),
-        'open'        : choose(env.bool('open'), config('open')),
-        'editor'      : env('editor') || config('editor'),
-        'packer'      : config('packer') || 'tar',
-        'zip'         : config('zip'),
-        'username'    : env('username') || config('username'),
-        'root'        : choose(env('root'), config('root')),
-        'prefix'      : choose(env('prefix'), config('prefix')),
-        'console'     : choose(env.bool('console'), config('console')),
-        'contact'     : choose(env.bool('contact'), config('contact')),
-        'terminal'    : choose(env.bool('terminal'), config('terminal')),
-        'columns'     : env('columns') || config('columns') || '',
-        'vim'         : choose(env.bool('vim'), config('vim')),
-        'log'         : config('log'),
+        'server': true,
+        'name': choose(env('name'), config('name')),
+        'auth': choose(env.bool('auth'), config('auth')),
+        'port': config('port'),
+        'online': config('online'),
+        'open': choose(env.bool('open'), config('open')),
+        'editor': env('editor') || config('editor'),
+        'packer': config('packer') || 'tar',
+        'zip': config('zip'),
+        'username': env('username') || config('username'),
+        'root': choose(env('root'), config('root')),
+        'prefix': choose(env('prefix'), config('prefix')),
+        'console': choose(env.bool('console'), config('console')),
+        'contact': choose(env.bool('contact'), config('contact')),
+        'terminal': choose(env.bool('terminal'), config('terminal')),
+        'columns': env('columns') || config('columns') || '',
+        'vim': choose(env.bool('vim'), config('vim')),
+        'log': config('log'),
         
         'import-url': env('import_url') || config('importUrl'),
         'import-listen': choose(env.bool('import_listen'), config('importListen')),
-        'import'      : choose(env.bool('import'), config('import')),
-        'export'      : choose(env.bool('export'), config('export')),
+        'import': choose(env.bool('import'), config('import')),
+        'export': choose(env.bool('export'), config('export')),
         
         'prefix-socket': config('prefixSocket'),
         'show-file-name': choose(env.bool('show_file_name'), config('showFileName')),
@@ -250,7 +249,7 @@ async function main() {
 }
 
 async function validateRoot(root, config) {
-    const validate = await simport(DIR_SERVER + 'validate.js');
+    const validate = await simport(`${DIR_SERVER}validate.js`);
     validate.root(root, config);
     
     if (root === '/')
@@ -269,7 +268,7 @@ function version() {
 }
 
 async function start(options, config) {
-    const SERVER = DIR_SERVER + 'server.mjs';
+    const SERVER = `${DIR_SERVER}server.mjs`;
     
     if (!args.server)
         return;
@@ -326,7 +325,7 @@ async function help() {
 
 function repl() {
     console.log('REPL mode enabled (telnet localhost 1337)');
-    require(DIR_SERVER + 'repl');
+    require(`${DIR_SERVER}repl`);
 }
 
 async function checkUpdate() {
@@ -342,10 +341,9 @@ async function showUpdateInfo(version) {
     
     const chalk = await simport('chalk');
     
-    const latestVersion = chalk.green.bold('v' + version);
+    const latestVersion = chalk.green.bold(`v${version}`);
     const latest = `update available: ${latestVersion}`;
     const current = chalk.dim(`(current: v${Info.version})`);
     
     console.log('%s %s', latest, current);
 }
-

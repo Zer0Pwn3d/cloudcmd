@@ -9,7 +9,6 @@ const {btoa} = require('./base64');
 const getHeaderField = currify(_getHeaderField);
 
 /* КОНСТАНТЫ (общие для клиента и сервера)*/
-
 /* название программы */
 const NAME = 'Cloud Commander';
 const FS = '/fs';
@@ -29,9 +28,9 @@ module.exports.formatMsg = (msg, name, status) => {
     name = name || '';
     
     if (name)
-        name = '("' + name + '")';
+        name = `("${name}")`;
     
-    return msg + ': ' + status + name;
+    return `${msg}: ${status}${name}`;
 };
 
 /**
@@ -41,10 +40,7 @@ module.exports.formatMsg = (msg, name, status) => {
 module.exports.getTitle = (options) => {
     options = options || {};
     
-    const {
-        path = Path(),
-        name,
-    } = options;
+    const {path = Path(), name} = options;
     
     const array = [
         name || NAME,
@@ -71,7 +67,11 @@ function getPathLink(url, prefix, template) {
         .split('/')
         .slice(1, -1);
     
-    const allNames = ['/', ...names];
+    const allNames = [
+        '/',
+        ...names,
+    ];
+    
     const lines = [];
     const n = allNames.length;
     
@@ -82,10 +82,10 @@ function getPathLink(url, prefix, template) {
         const isLast = i === n - 1;
         
         if (i)
-            path += name + '/';
+            path += `${name}/`;
         
         if (i && isLast) {
-            lines.push(name + '/');
+            lines.push(`${name}/`);
             continue;
         }
         
@@ -164,8 +164,8 @@ module.exports.buildFromJSON = (params) => {
     /* сохраняем путь */
     Path(path);
     
-    fileTable += header + '<ul data-name="js-files" class="files">';
-    
+    fileTable += `${header}<ul data-name="js-files" class="files">`;
+
     /* Если мы не в корне */
     if (path !== '/') {
         const dotDot = getDotDot(path);
@@ -178,7 +178,7 @@ module.exports.buildFromJSON = (params) => {
         });
         
         const dataName = getDataName('..');
-        const attribute = 'draggable="true" ' + dataName;
+        const attribute = `draggable="true" ${dataName}`;
         
         /* Сохраняем путь к каталогу верхнего уровня*/
         fileTable += rendy(template.file, {
@@ -199,7 +199,7 @@ module.exports.buildFromJSON = (params) => {
         .map((file) => {
             const name = encode(file.name);
             const link = prefix + FS + path + name;
-            
+        
             const {
                 type,
                 mode,
@@ -207,17 +207,17 @@ module.exports.buildFromJSON = (params) => {
                 owner,
                 size,
             } = file;
-            
+        
             const linkResult = rendy(templateLink, {
                 link,
                 title: name,
                 name,
                 attribute: getAttribute(file.type),
             });
-            
+        
             const dataName = getDataName(file.name);
             const attribute = `draggable="true" ${dataName}`;
-            
+        
             return rendy(templateFile, {
                 tag: 'li',
                 attribute,
@@ -286,4 +286,3 @@ function getDotDot(path) {
     
     return dotDot;
 }
-

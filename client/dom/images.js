@@ -15,7 +15,6 @@ function getLoadingType() {
 }
 
 module.exports.get = getElement;
-
 /**
  * check SVG SMIL animation support
  */
@@ -69,7 +68,6 @@ module.exports.error = () => {
 module.exports.show = show;
 module.exports.show.load = show;
 module.exports.show.error = error;
-
 /**
 * Function shows loading spinner
 * position = {top: true};
@@ -127,7 +125,7 @@ module.exports.setProgress = (value, title) => {
     if (!element)
         return Images;
     
-    element.setAttribute(DATA, value + '%');
+    element.setAttribute(DATA, `${value}%`);
     
     if (title)
         element.title = title;
@@ -147,4 +145,3 @@ module.exports.clearProgress = () => {
     
     return Images;
 };
-

@@ -1,9 +1,11 @@
-# Cloud Commander v16.2.0
+# Cloud Commander v16.17.9
 
-### [Main][MainURL] [Blog][BlogURL]
+### [Main][MainURL] [Blog][BlogURL] [Support][SupportURL] [Demo][DemoURL]
 
-[MainURL]: http://cloudcmd.io "Main"
-[BlogURL]: http://blog.cloudcmd.io "Blog"
+[MainURL]: https://cloudcmd.io "Main"
+[BlogURL]: https://blog.cloudcmd.io "Blog"
+[SupportURL]: https://patreon.com/coderaiser "Patreon"
+[DemoURL]: https://cloudcmd.onrender.com/
 [DWORD]: https://github.com/cloudcmd/dword "Editor based on CodeMirror"
 [EDWARD]: https://github.com/cloudcmd/edward "Editor based on Ace"
 [DEEPWORD]: https://github.com/cloudcmd/deepword "Editor based on Monaco"
@@ -170,6 +172,7 @@ Then, start the server again with `cloudcmd` and reload the page.
 | `*`                   | select/unselect all
 | `+`                   | expand selection
 | `-`                   | shrink selection
+| `:`                   | open Command Line
 | `Ctrl + X`            | cut to buffer
 | `Ctrl + C`            | copy to buffer
 | `Ctrl + V`            | paste from buffer
@@ -217,6 +220,10 @@ When the `--vim` option is provided, or the configuration parameter `vim` is set
 | `/`                   | find file in current directory
 | `n`                   | navigate to next found file
 | `N`                   | navigate to previous found file
+| `md`                  | make directory
+| `mf`                  | make file
+| `tt`                  | show terminal
+| `e`                   | edit file
 
 Commands can be joined, for example:
 
@@ -367,50 +374,50 @@ Here's a description of all options:
 
 ```json
 {
-    "name"                  : "",       // set tab name in web browser
-    "auth"                  : false,    // enable http authentication
-    "username"              : "root",   // username for authentication
-    "password"              : "toor",   // password hash for authentication
-    "algo"                  : "sha512WithRSAEncryption", // cryptographic algorithm
-    "editor"                : "edward", // default, could be "dword" or "edward"
-    "packer"                : "tar",    // default, could be "tar" or "zip"
-    "diff"                  : true,     // when save - send patch, not whole file
-    "zip"                   : true,     // zip text before send / unzip before save
-    "buffer"                : true,     // buffer for copying files
-    "dirStorage"            : true,     // store directory listing
-    "online"                : false,    // do not load js files from cdn
-    "open"                  : true,     // open web browser when server started
-    "oneFilePanel"          : false,    // show one file panel
-    "keysPanel"             : true,     // show classic panel with buttons of keys
-    "port"                  : 8000,     // http port
-    "ip"                    : null,     // ip or null(default)
-    "root"                  : "/",      // root directory
-    "prefix"                : "",       // url prefix
-    "prefixSocket"          : "",       // prefix for socket connection
-    "confirmCopy"           : true,     // confirm copy
-    "confirmMove"           : true,     // confirm move
-    "showConfig"            : false,    // show config at startup
-    "showFileName"          : false,    // do not show file name in view and edit
-    "contact"               : true,     // enable contact
-    "configDialog"          : true,     // enable config dialog
-    "configAuth"            : true,     // enable auth change in config dialog
-    "console"               : true,     // enable console
-    "syncConsolePath"       : false,    // do not sync console path
-    "terminal"              : false,    // disable terminal
-    "terminalPath"          : "",       // path of a terminal
-    "terminalCommand"       : "",       // set command to run in terminal
-    "terminalAutoRestart"   : true,     // restart command on exit
-    "vim"                   : false,    // disable vim hot keys
-    "columns"               : "name-size-date-owner-mode", // set visible columns
-    "export"                : false,    // enable export of config through a server
-    "exportToken"           : "root",   // token used by export server
-    "import"                : false,    // enable import of config
-    "import-url"            : "http://localhost:8000",   // url of an export server
-    "importToken"           : "root",   // token used to connect to export server
-    "importListen"          : false,    // listen on config updates
-    "dropbox"               : false,    // disable dropbox integration
-    "dropboxToken"          : "",       // unset dropbox token
-    "log"                   : true     // logging
+    "name": "", // set tab name in web browser
+    "auth": false, // enable http authentication
+    "username": "root", // username for authentication
+    "password": "toor", // password hash for authentication
+    "algo": "sha512WithRSAEncryption", // cryptographic algorithm
+    "editor": "edward", // default, could be "dword" or "edward"
+    "packer": "tar", // default, could be "tar" or "zip"
+    "diff": true, // when save - send patch, not whole file
+    "zip": true, // zip text before send / unzip before save
+    "buffer": true, // buffer for copying files
+    "dirStorage": true, // store directory listing
+    "online": false, // do not load js files from cdn
+    "open": true, // open web browser when server started
+    "oneFilePanel": false, // show one file panel
+    "keysPanel": true, // show classic panel with buttons of keys
+    "port": 8000, // http port
+    "ip": null, // ip or null(default)
+    "root": "/", // root directory
+    "prefix": "", // url prefix
+    "prefixSocket": "", // prefix for socket connection
+    "confirmCopy": true, // confirm copy
+    "confirmMove": true, // confirm move
+    "showConfig": false, // show config at startup
+    "showFileName": false, // do not show file name in view and edit
+    "contact": true, // enable contact
+    "configDialog": true, // enable config dialog
+    "configAuth": true, // enable auth change in config dialog
+    "console": true, // enable console
+    "syncConsolePath": false, // do not sync console path
+    "terminal": false, // disable terminal
+    "terminalPath": "", // path of a terminal
+    "terminalCommand": "", // set command to run in terminal
+    "terminalAutoRestart": true, // restart command on exit
+    "vim": false, // disable vim hot keys
+    "columns": "name-size-date-owner-mode", // set visible columns
+    "export": false, // enable export of config through a server
+    "exportToken": "root", // token used by export server
+    "import": false, // enable import of config
+    "import-url": "http://localhost:8000", // url of an export server
+    "importToken": "root", // token used to connect to export server
+    "importListen": false, // listen on config updates
+    "dropbox": false, // disable dropbox integration
+    "dropboxToken": "", // unset dropbox token
+    "log": true // logging
 }
 ```
 
@@ -447,7 +454,7 @@ Some config options can be overridden with environment variables, such as:
 - `CLOUDCMD_IMPORT` - enable import of config
 - `CLOUDCMD_IMPORT_TOKEN` - authorization  token used to connect to export server
 - `CLOUDCMD_IMPORT_URL` - url of an import server
-- `CLOUDCMD_IMPORT_LISTEN`- enable listen on config updates from import server
+- `CLOUDCMD_IMPORT_LISTEN` - enable listen on config updates from import server
 
 ### User Menu
 
@@ -460,9 +467,7 @@ const RENAME_FILE = 'Rename file';
 
 export default {
     '__settings': {
-        select: [
-            RENAME_FILE,
-        ],
+        select: [RENAME_FILE],
         run: false,
     },
     [`F2 - ${RENAME_FILE}`]: async ({DOM}) => {
@@ -492,7 +497,10 @@ export default {
         const path = `${dirPath}.cloudcmd.menu.js`;
         const {prefix} = CloudCmd;
         
-        const data = await readDefaultMenu({prefix});
+        const data = await readDefaultMenu({
+            prefix,
+        });
+        
         await createDefaultMenu({
             path,
             data,
@@ -661,7 +669,7 @@ npm i cloudcmd express socket.io -S
 And create `index.js`:
 
 ```js
-import http from 'http';
+import http from 'node:http';
 import cloudcmd from 'cloudcmd';
 import {Server} from 'socket.io';
 import express from 'express';
@@ -714,7 +722,7 @@ server.listen(port);
 Here is example with two `Config Managers`:
 
 ```js
-import http from 'http';
+import http from 'node:http';
 import cloudcmd from 'cloudcmd';
 import {Server} from 'socket.io';
 import express from 'express';
@@ -736,6 +744,7 @@ const socket2 = new Server(server, {
 });
 
 const configManager1 = createConfigManager();
+
 configManager1('name', '1');
 
 const configManager2 = createConfigManager();
@@ -758,8 +767,10 @@ If you want to enable authorization, you can pass credentials to Cloud Commander
 
 ```js
 import criton from 'criton';
-const algo = 'sha512WithRSAEncryption'; // default
 
+const algo = 'sha512WithRSAEncryption';
+
+// default
 // you can generate a hash dynamically
 const password = criton('root', algo);
 
@@ -1082,6 +1093,39 @@ There are a lot of ways to be involved in `Cloud Commander` development:
 
 ## Version history
 
+- *2023.12.04*, **[v16.17.9](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.9)**
+- *2023.12.04*, **[v16.17.8](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.8)**
+- *2023.10.12*, **[v16.17.7](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.7)**
+- *2023.09.22*, **[v16.17.6](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.6)**
+- *2023.09.06*, **[v16.17.5](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.5)**
+- *2023.09.05*, **[v16.17.4](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.4)**
+- *2023.09.05*, **[v16.17.3](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.3)**
+- *2023.09.04*, **[v16.17.2](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.2)**
+- *2023.09.04*, **[v16.17.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.1)**
+- *2023.09.04*, **[v16.17.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.17.0)**
+- *2023.08.10*, **[v16.16.3](//github.com/coderaiser/cloudcmd/releases/tag/v16.16.3)**
+- *2023.08.09*, **[v16.16.2](//github.com/coderaiser/cloudcmd/releases/tag/v16.16.2)**
+- *2023.08.07*, **[v16.16.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.16.1)**
+- *2023.07.09*, **[v16.16.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.16.0)**
+- *2023.05.17*, **[v16.15.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.15.0)**
+- *2023.03.21*, **[v16.14.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.14.1)**
+- *2023.03.08*, **[v16.14.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.14.0)**
+- *2023.01.30*, **[v16.13.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.13.1)**
+- *2023.01.29*, **[v16.13.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.13.0)**
+- *2023.01.29*, **[v16.12.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.12.0)**
+- *2023.01.22*, **[v16.11.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.11.0)**
+- *2023.01.19*, **[v16.10.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.10.0)**
+- *2023.01.18*, **[v16.9.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.9.1)**
+- *2023.01.17*, **[v16.9.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.9.0)**
+- *2023.01.16*, **[v16.8.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.8.0)**
+- *2023.01.15*, **[v16.7.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.7.0)**
+- *2022.10.20*, **[v16.6.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.6.1)**
+- *2022.10.09*, **[v16.6.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.6.0)**
+- *2022.08.06*, **[v16.5.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.5.0)**
+- *2022.07.20*, **[v16.4.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.4.1)**
+- *2022.07.11*, **[v16.4.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.4.0)**
+- *2022.07.02*, **[v16.3.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.3.1)**
+- *2022.07.01*, **[v16.3.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.3.0)**
 - *2022.06.17*, **[v16.2.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.2.0)**
 - *2022.05.12*, **[v16.1.1](//github.com/coderaiser/cloudcmd/releases/tag/v16.1.1)**
 - *2022.04.23*, **[v16.1.0](//github.com/coderaiser/cloudcmd/releases/tag/v16.1.0)**

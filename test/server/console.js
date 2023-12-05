@@ -15,7 +15,10 @@ test('cloudcmd: console: enabled', async (t) => {
         console: true,
     };
     
-    const {port, done} = await connect({config});
+    const {port, done} = await connect({
+        config,
+    });
+    
     const socket = io(`http://localhost:${port}/console`);
     
     socket.emit('auth', configFn('username'), configFn('password'));
@@ -34,7 +37,10 @@ test('cloudcmd: console: disabled', async (t) => {
         console: false,
     };
     
-    const {port, done} = await connect({config});
+    const {port, done} = await connect({
+        config,
+    });
+    
     const socket = io(`http://localhost:${port}/console`);
     
     const [error] = await once(socket, 'connect_error');
@@ -45,4 +51,3 @@ test('cloudcmd: console: disabled', async (t) => {
     t.equal(error.message, 'Invalid namespace', 'should emit error');
     t.end();
 });
-

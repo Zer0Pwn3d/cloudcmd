@@ -6,4 +6,3 @@ module.exports = (operation, from, to) => {
     
     return `${operation} ${from} -> ${to}`;
 };
-

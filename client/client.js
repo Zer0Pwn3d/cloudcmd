@@ -1,7 +1,8 @@
 'use strict';
 
-/* global DOM */
+const process = require('process');
 
+/* global DOM */
 const Emitify = require('emitify');
 const inherits = require('inherits');
 const rendy = require('rendy');
@@ -16,6 +17,7 @@ const Images = require('./dom/images');
 const {unregisterSW} = require('./sw/register');
 const getJsonFromFileTable = require('./get-json-from-file-table');
 const Key = require('./key');
+
 const {
     apiURL,
     formatMsg,
@@ -45,10 +47,7 @@ function CloudCmdProto(DOM) {
     const CloudCmd = this;
     const Info = DOM.CurrentInfo;
     
-    const {
-        Storage,
-        Files,
-    } = DOM;
+    const {Storage, Files} = DOM;
     
     this.log = (...a) => {
         if (!isDev)
@@ -59,8 +58,6 @@ function CloudCmdProto(DOM) {
     this.prefix = '';
     this.prefixSocket = '';
     this.prefixURL = '';
-    this.DIRCLIENT = '/dist/';
-    this.DIRCLIENT_MODULES = this.DIRCLIENT + 'modules/';
     
     this.MIN_ONE_PANEL_WIDTH = 1155;
     this.HOST = location.origin || location.protocol + '//' + location.host;
@@ -77,28 +74,14 @@ function CloudCmdProto(DOM) {
         right: 'asc',
     };
     
-    /**
-     * Функция привязываеться ко всем ссылкам и
-     *  загружает содержимое каталогов
-     *
-     * @param params - {
-     *          paramLink - ссылка
-     *          needRefresh - необходимость обязательной загрузки данных с сервера
-     *          panel
-     *      }
-     * @param callback
-     */
-    this.loadDir = async (params) => {
-        const p = params;
-        const refresh = p.isRefresh;
-        
-        const {
-            panel,
-            history = true,
-            noCurrent,
-            currentName,
-        } = p;
-        
+    this.changeDir = async (path, {
+        isRefresh,
+        panel,
+        history = true,
+        noCurrent,
+        currentName,
+    } = {}) => {
+        const refresh = isRefresh;
         let panelChanged;
         
         if (!noCurrent && panel && panel !== Info.panel) {
@@ -112,17 +95,15 @@ function CloudCmdProto(DOM) {
             imgPosition = 'top';
         
         Images.show.load(imgPosition, panel);
-        const path = addSlashToEnd(p.path);
-        
         /* загружаем содержимое каталога */
-        await ajaxLoad(path, {
+        await ajaxLoad(addSlashToEnd(path), {
             refresh,
             history,
             noCurrent,
             currentName,
         }, panel);
     };
-    
+
     /**
      * Конструктор CloudClient, который
      * выполняет весь функционал по
@@ -132,6 +113,8 @@ function CloudCmdProto(DOM) {
         CloudCmd.prefix = prefix;
         CloudCmd.prefixURL = `${prefix}${apiURL}`;
         CloudCmd.prefixSocket = config.prefixSocket;
+        CloudCmd.DIR_DIST = `${prefix}/dist`;
+        CloudCmd.DIR_MODULES = `${this.DIR_DIST}/modules`;
         
         CloudCmd.config = (key) => config[key];
         CloudCmd.config.if = currify((key, fn, a) => config[key] && fn(a));
@@ -140,7 +123,6 @@ function CloudCmdProto(DOM) {
              * should be called from config.js only
              * after successful update on server
              */
-            
             if (key === 'password')
                 return;
             
@@ -151,7 +133,7 @@ function CloudCmdProto(DOM) {
             CloudCmd.MIN_ONE_PANEL_WIDTH = Infinity;
         
         if (!document.body.scrollIntoViewIfNeeded)
-            await load.js(prefix + CloudCmd.DIRCLIENT_MODULES + 'polyfill.js');
+            await load.js(`${CloudCmd.DIR_MODULES}/polyfill.js`);
         
         await initModules();
         await baseInit();
@@ -162,11 +144,11 @@ function CloudCmdProto(DOM) {
     
     async function loadStyle() {
         const {prefix} = CloudCmd;
-        const name = prefix + '/dist/cloudcmd.common.css';
+        const name = `${prefix}/dist/cloudcmd.common.css`;
         
         await load.css(name);
     }
-    
+
     this.route = (path) => {
         const query = path.split('/');
         
@@ -182,6 +164,7 @@ function CloudCmdProto(DOM) {
         if (file && !current) {
             const msg = formatMsg('set current file', file, 'error');
             CloudCmd.log(msg);
+            
             return;
         }
         
@@ -233,7 +216,7 @@ function CloudCmdProto(DOM) {
     async function saveCurrentName(currentName) {
         await Storage.set('current-name', currentName);
     }
-    
+
     async function baseInit() {
         const files = DOM.getFiles();
         
@@ -253,6 +236,7 @@ function CloudCmdProto(DOM) {
             });
         
         const dirPath = DOM.getCurrentDirPath();
+        
         Listeners = CloudCmd.Listeners;
         Listeners.init();
         
@@ -269,7 +253,7 @@ function CloudCmdProto(DOM) {
         if (!data)
             await Storage.setJson(dirPath, getJsonFromFileTable());
     }
-    
+
     function getPanels() {
         const panels = ['left'];
         
@@ -281,7 +265,7 @@ function CloudCmdProto(DOM) {
             'right',
         ];
     }
-    
+
     this.execFromModule = async (moduleName, funcName, ...args) => {
         await CloudCmd[moduleName]();
         
@@ -290,19 +274,15 @@ function CloudCmdProto(DOM) {
     };
     
     this.refresh = async (options = {}) => {
-        const {
-            panel = Info.panel,
-            currentName,
-        } = options;
+        const {panel = Info.panel, currentName} = options;
         
         const path = DOM.getCurrentDirPath(panel);
         
         const isRefresh = true;
         const history = false;
-        const noCurrent = options ? options.noCurrent : false;
+        const noCurrent = options?.noCurrent;
         
-        await CloudCmd.loadDir({
-            path,
+        await CloudCmd.changeDir(path, {
             isRefresh,
             history,
             panel,
@@ -310,7 +290,7 @@ function CloudCmdProto(DOM) {
             currentName,
         });
     };
-    
+
     /**
      * Функция загружает json-данные о Файловой Системе
      * через ajax-запрос.
@@ -324,16 +304,13 @@ function CloudCmdProto(DOM) {
     async function ajaxLoad(path, options = {}, panel) {
         const {RESTful} = DOM;
         
-        CloudCmd.log('reading dir: "' + path + '";');
+        CloudCmd.log(`reading dir: "${path}";`);
         
         const dirStorage = CloudCmd.config('dirStorage');
         const json = dirStorage && await Storage.getJson(path);
         
         const name = options.currentName || Info.name;
-        const {
-            noCurrent,
-            refresh,
-        } = options;
+        const {noCurrent, refresh} = options;
         
         if (!refresh && json)
             return await createFileTable(json, panel, options);
@@ -350,7 +327,8 @@ function CloudCmdProto(DOM) {
         const [, newObj] = await RESTful.read(path + query, 'json');
         
         if (!newObj)
-            return; // that's OK, error handled by RESTful
+            // that's OK, error handled by RESTful
+            return;
         
         options.sort = sort;
         options.order = order;
@@ -365,7 +343,7 @@ function CloudCmdProto(DOM) {
         
         Storage.setJson(path, newObj);
     }
-    
+
     /**
      * Функция строит файловую таблицу
      * @param json  - данные о файлах
@@ -374,10 +352,7 @@ function CloudCmdProto(DOM) {
      * @param callback
      */
     async function createFileTable(data, panelParam, options) {
-        const {
-            history,
-            noCurrent,
-        } = options;
+        const {history, noCurrent} = options;
         
         const names = [
             'file',
@@ -386,10 +361,7 @@ function CloudCmdProto(DOM) {
             'pathLink',
         ];
         
-        const [
-            error,
-            [file, path, link, pathLink],
-        ] = await tryToCatch(Files.get, names);
+        const [error, [file, path, link, pathLink]] = await tryToCatch(Files.get, names);
         
         if (error)
             return DOM.Dialog.alert(error.responseText);
@@ -397,10 +369,7 @@ function CloudCmdProto(DOM) {
         const panel = panelParam || DOM.getPanel();
         const {prefix} = CloudCmd;
         
-        const {
-            dir,
-            name,
-        } = Info;
+        const {dir, name} = Info;
         
         const {childNodes} = panel;
         let i = childNodes.length;
@@ -409,12 +378,12 @@ function CloudCmdProto(DOM) {
             panel.removeChild(panel.lastChild);
         
         panel.innerHTML = buildFromJSON({
-            sort        : options.sort,
-            order       : options.order,
+            sort: options.sort,
+            order: options.order,
             data,
-            id          : panel.id,
+            id: panel.id,
             prefix,
-            template    : {
+            template: {
                 file,
                 path,
                 pathLink,
@@ -440,7 +409,7 @@ function CloudCmdProto(DOM) {
             CloudCmd.emit('active-dir', Info.dirPath);
         }
     }
-    
+
     this.goToParentDir = async () => {
         const {
             dir,
@@ -454,9 +423,7 @@ function CloudCmdProto(DOM) {
         
         const path = parentDirPath;
         
-        await CloudCmd.loadDir({
-            path,
-        });
+        await CloudCmd.changeDir(path);
         
         const current = DOM.getCurrentByName(dir);
         const [first] = DOM.getFiles(panel);
@@ -466,4 +433,3 @@ function CloudCmdProto(DOM) {
         });
     };
 }
-

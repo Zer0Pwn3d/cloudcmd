@@ -4,7 +4,6 @@
 /* global Util */
 /* global DOM */
 /* global Console */
-
 CloudCmd.Konsole = exports;
 
 const exec = require('execon');
@@ -14,10 +13,7 @@ const loadJS = require('load.js').js;
 const createElement = require('@cloudcmd/create-element');
 
 const Images = require('../dom/images');
-const {
-    Dialog,
-    CurrentInfo:Info,
-} = DOM;
+const {Dialog, CurrentInfo: Info} = DOM;
 
 const rmLastSlash = (a) => a.replace(/\/$/, '') || '/';
 
@@ -71,9 +67,7 @@ async function onPath(path) {
     if (Info.dirPath === path)
         return;
     
-    await CloudCmd.loadDir({
-        path,
-    });
+    await CloudCmd.changeDir(path);
 }
 
 const getDirPath = () => {
@@ -135,18 +129,17 @@ module.exports.show = (callback) => {
 };
 
 const load = async () => {
-    Util.time(Name + ' load');
+    Util.time(`${Name} load`);
     
     const prefix = getPrefix();
-    const url = prefix + '/console.js';
+    const url = `${prefix}/console.js`;
     const [error] = await tryToCatch(loadJS, url);
     
     Loaded = true;
-    Util.timeEnd(Name + ' load');
+    Util.timeEnd(`${Name} load`);
     
     if (error)
         return Dialog.alert(error.message, {
             cancel: false,
         });
 };
-

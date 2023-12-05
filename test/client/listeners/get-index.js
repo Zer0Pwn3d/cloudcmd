@@ -13,9 +13,11 @@ test('cloudcmd: client: listeners: getIndex: not found', (t) => {
 });
 
 test('cloudcmd: client: listeners: getIndex: found', (t) => {
-    const array = ['hello', 'world'];
+    const array = [
+        'hello',
+        'world',
+    ];
     
     t.equal(getIndex(array, 'world'), 1, 'should return index');
     t.end();
 });
-

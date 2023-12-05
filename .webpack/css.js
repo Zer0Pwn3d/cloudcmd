@@ -10,7 +10,7 @@ const {
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const {env} = process;
+const {env} = require('process');
 const isDev = env.NODE_ENV === 'development';
 
 const extractCSS = (a) => new ExtractTextPlugin(`${a}.css`);
@@ -37,11 +37,8 @@ const plugins = clean([
 const rules = [{
     test: /\.css$/,
     exclude: /css\/(nojs|view|config|terminal|user-menu|columns.*)\.css/,
-    use: extractMain.extract([
-        'css-loader',
-    ]),
-},
-...cssPlugins.map(extract), {
+    use: extractMain.extract(['css-loader']),
+}, ...cssPlugins.map(extract), {
     test: /\.(png|gif|svg|woff|woff2|eot|ttf)$/,
     use: {
         loader: 'url-loader',
@@ -63,7 +60,8 @@ function getCSSList(dir) {
     const addDir = (name) => `${dir}/${name}`;
     const rootDir = join(__dirname, '..');
     
-    return fs.readdirSync(`${rootDir}/css/${dir}`)
+    return fs
+        .readdirSync(`${rootDir}/css/${dir}`)
         .map(base)
         .map(addDir);
 }
@@ -73,9 +71,6 @@ function extract(extractPlugin) {
     
     return {
         test: RegExp(`css/${filename}`),
-        use: extractPlugin.extract([
-            'css-loader',
-        ]),
+        use: extractPlugin.extract(['css-loader']),
     };
 }
-

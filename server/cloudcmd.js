@@ -1,26 +1,25 @@
 'use strict';
 
-const DIR = __dirname + '/';
-const DIR_COMMON = DIR + '../common/';
+const process = require('process');
+const DIR = `${__dirname}/`;
+const DIR_COMMON = `${DIR}../common/`;
 const path = require('path');
 
 const fs = require('fs');
-const cloudfunc = require(DIR_COMMON + 'cloudfunc');
+const cloudfunc = require(`${DIR_COMMON}cloudfunc`);
 
-const authentication = require(DIR + 'auth');
-const {
-    createConfig,
-    configPath,
-} = require(DIR + 'config');
-const modulas = require(DIR + 'modulas');
+const authentication = require(`${DIR}auth`);
+const {createConfig, configPath} = require(`${DIR}config`);
 
-const userMenu = require(DIR + 'user-menu');
-const rest = require(DIR + 'rest');
-const route = require(DIR + 'route');
-const validate = require(DIR + 'validate');
-const prefixer = require(DIR + 'prefixer');
-const terminal = require(DIR + 'terminal');
-const distribute = require(DIR + 'distribute');
+const modulas = require(`${DIR}modulas`);
+
+const userMenu = require(`${DIR}user-menu`);
+const rest = require(`${DIR}rest`);
+const route = require(`${DIR}route`);
+const validate = require(`${DIR}validate`);
+const prefixer = require(`${DIR}prefixer`);
+const terminal = require(`${DIR}terminal`);
+const distribute = require(`${DIR}distribute`);
 const currify = require('currify');
 
 const apart = require('apart');
@@ -33,7 +32,7 @@ const dword = require('dword');
 const deepword = require('deepword');
 const nomine = require('nomine');
 const fileop = require('@cloudcmd/fileop');
-const DIR_ROOT = DIR + '../';
+const DIR_ROOT = `${DIR}../`;
 
 const isDev = process.env.NODE_ENV === 'development';
 const getDist = (isDev) => isDev ? 'dist-dev' : 'dist';
@@ -139,35 +138,35 @@ function listen({prefixSocket, socket, config}) {
     edward.listen(socket, {
         root,
         auth,
-        prefixSocket: prefixSocket + '/edward',
+        prefixSocket: `${prefixSocket}/edward`,
     });
     
     dword.listen(socket, {
         root,
         auth,
-        prefixSocket: prefixSocket + '/dword',
+        prefixSocket: `${prefixSocket}/dword`,
     });
     
     deepword.listen(socket, {
         root,
         auth,
-        prefixSocket: prefixSocket + '/deepword',
+        prefixSocket: `${prefixSocket}/deepword`,
     });
     
     config('console') && konsole.listen(socket, {
         auth,
-        prefixSocket: prefixSocket + '/console',
+        prefixSocket: `${prefixSocket}/console`,
     });
     
     fileop.listen(socket, {
         root,
         auth,
-        prefix: prefixSocket + '/fileop',
+        prefix: `${prefixSocket}/fileop`,
     });
     
     config('terminal') && terminal(config).listen(socket, {
         auth,
-        prefix: prefixSocket + '/gritty',
+        prefix: `${prefixSocket}/gritty`,
         command: config('terminalCommand'),
         autoRestart: config('terminalAutoRestart'),
     });
@@ -194,9 +193,7 @@ function cloudcmd({modules, config}) {
         config('console') && konsole({
             online,
         }),
-        
         config('terminal') && terminal(config, {}),
-        
         edward({
             root,
             online,
@@ -205,7 +202,6 @@ function cloudcmd({modules, config}) {
             dropbox,
             dropboxToken,
         }),
-        
         dword({
             root,
             online,
@@ -214,7 +210,6 @@ function cloudcmd({modules, config}) {
             dropbox,
             dropboxToken,
         }),
-        
         deepword({
             root,
             online,
@@ -223,38 +218,30 @@ function cloudcmd({modules, config}) {
             dropbox,
             dropboxToken,
         }),
-        
         fileop(),
         nomine(),
-        
         setUrl,
         setSW,
         logout,
         authentication(config),
         config.middle,
-        
         modules && modulas(modules),
-        
         config('dropbox') && restbox({
             prefix: cloudfunc.apiURL,
             root,
             token: dropboxToken,
         }),
-        
         restafary({
             prefix: cloudfunc.apiURL + '/fs',
             root,
         }),
-        
         userMenu({
             menuName: '.cloudcmd.menu.js',
         }),
-        
         rest(config),
         route(config, {
             html,
         }),
-        
         ponseStatic,
     ]);
     
@@ -294,4 +281,3 @@ function setSW(req, res, next) {
     
     next();
 }
-

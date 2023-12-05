@@ -12,7 +12,7 @@ module.exports = function setCurrentByChar(char, charStore) {
     let i = 0;
     
     const escapeChar = escapeRegExp(char);
-    const regExp = new RegExp('^' + escapeChar + '.*$', 'i');
+    const regExp = new RegExp(`^${escapeChar}.*$`, 'i');
     const {files} = Info;
     const chars = charStore();
     const n = chars.length;
@@ -31,12 +31,14 @@ module.exports = function setCurrentByChar(char, charStore) {
     const isTest = (a) => regExp.test(a);
     const isRoot = (a) => a === '..';
     const not = (f) => (a) => !f(a);
+    
     const setCurrent = (name) => {
         const byName = DOM.getCurrentByName(name);
         
         if (!skipCount) {
             setted = true;
             DOM.setCurrentFile(byName);
+            
             return true;
         }
         
@@ -56,4 +58,3 @@ module.exports = function setCurrentByChar(char, charStore) {
         charStore([char]);
     }
 };
-

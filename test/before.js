@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 const http = require('http');
 const os = require('os');
 
@@ -29,6 +30,7 @@ function before(options, fn = options) {
     
     const app = express();
     const server = http.createServer(app);
+    
     const after = (cb) => {
         if (currentConfig)
             writejson.sync(pathConfig, currentConfig);
@@ -47,13 +49,17 @@ function before(options, fn = options) {
     }));
     
     server.listen(() => {
-        fn(server.address().port, promisify(after));
+        fn(server
+            .address().port, promisify(after));
     });
 }
 
 module.exports.connect = promisify((options, fn = options) => {
     before(options, (port, done) => {
-        fn(null, {port, done});
+        fn(null, {
+            port,
+            done,
+        });
     });
 });
 
@@ -63,4 +69,3 @@ function defaultConfig() {
         root: __dirname,
     };
 }
-

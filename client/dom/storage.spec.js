@@ -1,9 +1,7 @@
 'use strict';
 
-const {
-    test,
-    stub,
-} = require('supertape');
+const {test, stub} = require('supertape');
+
 const storage = require('./storage');
 
 const {stringify} = JSON;
@@ -32,6 +30,7 @@ test('cloudcmd: client: storage: get', async (t) => {
     };
     
     const result = await storage.get('hello');
+    
     global.localStorage = localStorage;
     
     t.equal(result, 'world');
@@ -43,6 +42,7 @@ test('cloudcmd: client: storage: getJson', async (t) => {
     const expected = {
         hello: 'world',
     };
+    
     const getItem = stub().returns(stringify(expected));
     
     global.localStorage = {
@@ -50,6 +50,7 @@ test('cloudcmd: client: storage: getJson', async (t) => {
     };
     
     const result = await storage.getJson('hello');
+    
     global.localStorage = localStorage;
     
     t.deepEqual(result, expected);
@@ -102,7 +103,6 @@ test('cloudcmd: client: storage: clear', async (t) => {
     await storage.clear();
     global.localStorage = localStorage;
     
-    t.ok(clear.calledWith(), 'should call clear');
+    t.calledWithNoArgs(clear, 'should call clear');
     t.end();
 });
-

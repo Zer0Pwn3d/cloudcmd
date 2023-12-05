@@ -1,14 +1,15 @@
 'use strict';
 
+const process = require('process');
 const DIR = '../';
-const DIR_COMMON = DIR + '../common/';
+const DIR_COMMON = `${DIR}../common/`;
 
 const path = require('path');
 const fs = require('fs');
 
-const root = require(DIR + 'root');
-const CloudFunc = require(DIR_COMMON + 'cloudfunc');
-const markdown = require(DIR + 'markdown');
+const root = require(`${DIR}root`);
+const CloudFunc = require(`${DIR_COMMON}cloudfunc`);
+const markdown = require(`${DIR}markdown`);
 const info = require('./info');
 
 const jaguar = require('jaguar');
@@ -22,13 +23,15 @@ const ponse = require('ponse');
 
 const copymitter = require('copymitter');
 const moveFiles = require('@cloudcmd/move-files');
-
+const isString = (a) => typeof a === 'string';
+const isFn = (a) => typeof a === 'function';
 const swap = wraptile((fn, a, b) => fn(b, a));
 const isWin32 = process.platform === 'win32';
 const {apiURL} = CloudFunc;
 
 const UserError = (msg) => {
     const error = Error(msg);
+    
     error.code = 'EUSER';
     
     return error;
@@ -36,7 +39,7 @@ const UserError = (msg) => {
 
 module.exports = currify((config, request, response, next) => {
     const name = ponse.getPathName(request);
-    const regExp = RegExp('^' + apiURL);
+    const regExp = RegExp(`^${apiURL}`);
     const is = regExp.test(name);
     
     if (!is)
@@ -125,6 +128,7 @@ function onGET(params, config, callback) {
     if (cmd.startsWith('pack')) {
         cmd = cmd.replace(/^pack/, '');
         streamPack(root(cmd, rootDir), p.response, packer);
+        
         return;
     }
     
@@ -154,6 +158,7 @@ function streamPack(cmd, response, packer) {
     const noop = () => {};
     const filename = cmd.replace(getPackReg(packer), '');
     const dir = path.dirname(filename);
+    
     const names = [
         path.basename(filename),
     ];
@@ -168,10 +173,7 @@ function getCMD(cmd) {
     return cmd;
 }
 
-const getMoveMsg = (names) => {
-    const msg = formatMsg('move', names);
-    return msg;
-};
+const getMoveMsg = (names) => formatMsg('move', names);
 
 const getRenameMsg = (from, to) => {
     const msg = formatMsg('rename', {
@@ -216,7 +218,9 @@ function onPUT({name, config, body}, callback) {
         return moveFiles(fromRooted, toRooted, names)
             .on('error', fn)
             .on('end', fn);
-    } case 'rename':
+    }
+    
+    case 'rename':
         return rename(rootDir, files.from, files.to, callback);
     
     case 'copy':
@@ -328,7 +332,7 @@ function operation(op, packer, from, to, names, fn) {
     
     const [name] = names;
     pack.on('progress', (count) => {
-        process.stdout.write(`\r${ op } "${ name }": ${ count }%`);
+        process.stdout.write(`\r${op} "${name}": ${count}%`);
     });
     
     pack.on('end', () => {
@@ -371,9 +375,8 @@ module.exports._getWin32RootMsg = getWin32RootMsg;
 
 function getWin32RootMsg() {
     const message = 'Could not copy from/to root on windows!';
-    const error = Error(message);
     
-    return error;
+    return Error(message);
 }
 
 function parseData(data) {
@@ -393,13 +396,12 @@ function formatMsg(msg, data, status) {
 }
 
 function checkPut(name, body, callback) {
-    if (typeof name !== 'string')
+    if (!isString(name))
         throw Error('name should be a string!');
     
-    if (typeof body !== 'string')
+    if (!isString(body))
         throw Error('body should be a string!');
     
-    if (typeof callback !== 'function')
+    if (!isFn(callback))
         throw Error('callback should be a function!');
 }
-

@@ -18,7 +18,10 @@ const isContainClass = (element, className) => {
         throw Error('className could not be empty!');
     
     if (Array.isArray(className))
-        return className.some(currify(isContainClass, element));
+        return className.some(currify(
+            isContainClass,
+            element,
+        ));
     
     const {classList} = element;
     
@@ -26,7 +29,6 @@ const isContainClass = (element, className) => {
 };
 
 module.exports.isContainClass = isContainClass;
-
 /**
  * Function search element by tag
  * @param tag - className
@@ -41,7 +43,7 @@ module.exports.getByTag = (tag, element = document) => {
  * @param Id - id
  */
 module.exports.getById = (id, element = document) => {
-    return element.querySelector('#' + id);
+    return element.querySelector(`#${id}`);
 };
 
 /**
@@ -79,4 +81,3 @@ module.exports.show = (element) => {
     element.classList.remove('hidden');
     return DOM;
 };
-

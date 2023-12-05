@@ -25,6 +25,7 @@ module.exports = (key, operations) => {
     const prevStore = store();
     const isVisual = visual();
     const value = store(prevStore.concat(key));
+    
     const {
         escape = noop,
         moveNext = noop,
@@ -36,6 +37,10 @@ module.exports = (key, operations) => {
         find = noop,
         findNext = noop,
         findPrevious = noop,
+        makeFile = noop,
+        makeDirectory = noop,
+        terminal = noop,
+        edit = noop,
     } = operations;
     
     if (key === 'Enter')
@@ -44,6 +49,7 @@ module.exports = (key, operations) => {
     if (key === 'Escape') {
         visual(false);
         escape();
+        
         return end();
     }
     
@@ -80,10 +86,7 @@ module.exports = (key, operations) => {
     }
     
     if (value === 'gg' || key === '^') {
-        const {
-            isDelete,
-            isVisual,
-        } = handleDelete(prevStore);
+        const {isDelete, isVisual} = handleDelete(prevStore);
         
         movePrevious({
             count: Infinity,
@@ -94,9 +97,30 @@ module.exports = (key, operations) => {
         return end();
     }
     
+    if (value === 'md') {
+        makeDirectory();
+        return end();
+    }
+    
+    if (value === 'tt') {
+        terminal();
+        return end();
+    }
+    
+    if (value === 'e') {
+        edit();
+        return end();
+    }
+    
+    if (value === 'mf') {
+        makeFile();
+        return end();
+    }
+    
     if (key === 'd' && (visual() || prevStore === 'd')) {
         stopVisual();
         remove();
+        
         return end();
     }
     
@@ -115,6 +139,7 @@ module.exports = (key, operations) => {
         
         stopVisual();
         copy();
+        
         return end();
     }
     
@@ -126,6 +151,7 @@ module.exports = (key, operations) => {
     if (/^v$/i.test(key)) {
         visual(!visual());
         select();
+        
         return end();
     }
     
@@ -172,4 +198,3 @@ function getNumber(value) {
     
     return parseInt(value);
 }
-

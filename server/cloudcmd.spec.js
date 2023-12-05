@@ -1,15 +1,14 @@
 'use strict';
 
+const process = require('process');
 const path = require('path');
 
-const {
-    test,
-    stub,
-} = require('supertape');
+const {test, stub} = require('supertape');
+
 const {reRequire} = require('mock-require');
 
 const DIR = './';
-const cloudcmdPath = DIR + 'cloudcmd';
+const cloudcmdPath = `${DIR}cloudcmd`;
 
 const cloudcmd = require(cloudcmdPath);
 const {request} = require('serve-once')(cloudcmd, {
@@ -78,6 +77,7 @@ test('cloudcmd: getPrefix: function: empty', (t) => {
 
 test('cloudcmd: replaceDist', (t) => {
     const {NODE_ENV} = process.env;
+    
     process.env.NODE_ENV = 'development';
     
     const {_replaceDist} = reRequire(cloudcmdPath);
@@ -94,7 +94,7 @@ test('cloudcmd: replaceDist', (t) => {
 
 test('cloudcmd: replaceDist: !isDev', (t) => {
     const url = '/dist/hello';
-    const cloudcmdPath = DIR + 'cloudcmd';
+    const cloudcmdPath = `${DIR}cloudcmd`;
     
     const reset = cleanNodeEnv();
     const {_replaceDist} = reRequire(cloudcmdPath);
@@ -188,6 +188,7 @@ test('cloudcmd: sw', async (t) => {
 
 function cleanNodeEnv() {
     const {NODE_ENV} = process.env;
+    
     process.env.NODE_ENV = '';
     
     const reset = () => {
@@ -196,4 +197,3 @@ function cleanNodeEnv() {
     
     return reset;
 }
-

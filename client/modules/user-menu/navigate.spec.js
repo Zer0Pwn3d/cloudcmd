@@ -108,3 +108,59 @@ test('cloudcmd: user-menu: navigate', (t) => {
     t.end();
 });
 
+test('cloudcmd: user-menu: navigate: DOWN: count', (t) => {
+    const el = {
+        length: 3,
+        selectedIndex: 0,
+    };
+    
+    navigate(el, {
+        keyCode: 53,
+        key: '5',
+    });
+    
+    navigate(el, {
+        keyCode: DOWN,
+    });
+    
+    t.equal(el.selectedIndex, 5);
+    t.end();
+});
+
+test('cloudcmd: user-menu: navigate: J: count: to big', (t) => {
+    const el = {
+        length: 3,
+        selectedIndex: -Infinity,
+    };
+    
+    navigate(el, {
+        keyCode: 53,
+        key: '5',
+    });
+    
+    navigate(el, {
+        keyCode: J,
+    });
+    
+    t.equal(el.selectedIndex, 2);
+    t.end();
+});
+
+test('cloudcmd: user-menu: navigate: K: count: to small', (t) => {
+    const el = {
+        length: 3,
+        selectedIndex: -Infinity,
+    };
+    
+    navigate(el, {
+        keyCode: 53,
+        key: '5',
+    });
+    
+    navigate(el, {
+        keyCode: K,
+    });
+    
+    t.equal(el.selectedIndex, 0);
+    t.end();
+});

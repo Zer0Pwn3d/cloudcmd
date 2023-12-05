@@ -1,18 +1,16 @@
 'use strict';
 
 /* global CloudCmd, DOM */
-
 const clipboard = require('@cloudcmd/clipboard');
+const fullstore = require('fullstore');
 
 const Buffer = require('../dom/buffer');
-
 const Events = require('../dom/events');
 const KEY = require('./key');
 
 const vim = require('./vim');
 const setCurrentByChar = require('./set-current-by-char');
 const {createBinder} = require('./binder');
-const fullstore = require('fullstore');
 
 const Info = DOM.CurrentInfo;
 const Chars = fullstore();
@@ -20,9 +18,8 @@ const Chars = fullstore();
 const toggleVim = (keyCode) => {
     const {_config, config} = CloudCmd;
     
-    if (keyCode === KEY.ESC) {
+    if (keyCode === KEY.ESC)
         _config('vim', !config('vim'));
-    }
 };
 
 const isUndefined = (a) => typeof a === 'undefined';
@@ -30,8 +27,8 @@ const isUndefined = (a) => typeof a === 'undefined';
 Chars([]);
 
 const {assign} = Object;
-
 const binder = createBinder();
+
 module.exports = assign(binder, KEY);
 module.exports.bind = () => {
     Events.addKey(listener, true);
@@ -45,13 +42,13 @@ function getChar(event) {
       * event.keyIdentifier deprecated in chrome v51
       * but event.key is absent in chrome <= v51
       */
-    
     const {
         key,
         shift,
         keyCode,
         keyIdentifier,
     } = event;
+    
     const char = key || fromCharCode(keyIdentifier);
     const symbol = getSymbol(shift, keyCode);
     
@@ -111,9 +108,8 @@ function getSymbol(shift, keyCode) {
 function fromCharCode(keyIdentifier) {
     const code = keyIdentifier.substring(2);
     const hex = parseInt(code, 16);
-    const char = String.fromCharCode(hex);
     
-    return char;
+    return String.fromCharCode(hex);
 }
 
 async function switchKey(event) {
@@ -133,9 +129,10 @@ async function switchKey(event) {
     
     const {
         Operation,
-        loadDir,
+        changeDir,
         config,
     } = CloudCmd;
+    
     const {keyCode} = event;
     
     const alt = event.altKey;
@@ -156,12 +153,14 @@ async function switchKey(event) {
         break;
     
     case KEY.INSERT:
-        DOM .toggleSelectedFile(current)
+        DOM
+            .toggleSelectedFile(current)
             .setCurrentFile(next);
         break;
     
     case KEY.INSERT_MAC:
-        DOM .toggleSelectedFile(current)
+        DOM
+            .toggleSelectedFile(current)
             .setCurrentFile(next);
         break;
     
@@ -170,6 +169,7 @@ async function switchKey(event) {
             Operation.show('delete:silent');
         else
             Operation.show('delete');
+        
         break;
     
     case KEY.ASTERISK:
@@ -199,9 +199,7 @@ async function switchKey(event) {
         event.preventDefault();
         
         if (Info.isDir)
-            await loadDir({
-                path,
-            });
+            await changeDir(path);
         else if (shift)
             CloudCmd.View.show(null, {
                 raw: true,
@@ -306,6 +304,7 @@ async function switchKey(event) {
             DOM.swapPanels();
             event.preventDefault();
         }
+        
         break;
     
     /* navigation on file table:        *
@@ -400,9 +399,10 @@ async function switchKey(event) {
     
     case KEY.ENTER:
         if (Info.isDir)
-            await loadDir({path});
+            await changeDir(path);
         else
             CloudCmd.View.show();
+        
         break;
     
     case KEY.BACKSPACE:
@@ -412,9 +412,8 @@ async function switchKey(event) {
     
     case KEY.BACKSLASH:
         if (ctrlMeta)
-            await loadDir({
-                path: '/',
-            });
+            await changeDir('/');
+        
         break;
     
     case KEY.A:
@@ -455,6 +454,7 @@ async function switchKey(event) {
             .catch(CloudCmd.log);
         
         break;
+    
     /**
      * обновляем страницу,
      * загружаем содержимое каталога
@@ -468,26 +468,36 @@ async function switchKey(event) {
             CloudCmd.refresh();
             event.preventDefault();
         }
+        
         break;
     
     case KEY.C:
         if (ctrlMeta)
             Buffer.copy();
+        
         break;
     
     case KEY.X:
         if (ctrlMeta)
             Buffer.cut();
+        
         break;
     
     case KEY.V:
         if (ctrlMeta)
             Buffer.paste();
+        
         break;
     
     case KEY.Z:
         if (ctrlMeta)
             Buffer.clear();
+        
+        break;
+    
+    case KEY.COLON:
+        CloudCmd.CommandLine.show();
+        event.preventDefault();
         break;
     
     /* чистим хранилище */
@@ -498,7 +508,7 @@ async function switchKey(event) {
             CloudCmd.log('storage cleared');
             event.preventDefault();
         }
+        
         break;
     }
 }
-

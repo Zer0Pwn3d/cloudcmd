@@ -17,4 +17,3 @@ module.exports.atob = (str) => {
         .from(str, 'base64')
         .toString('binary');
 };
-

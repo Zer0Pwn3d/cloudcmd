@@ -1,5 +1,6 @@
 'use strict';
 
+const process = require('process');
 require('../css/main.css');
 require('../css/nojs.css');
 require('../css/columns/name-size-date.css');
@@ -8,15 +9,9 @@ require('../css/columns/name-size.css');
 const wraptile = require('wraptile');
 const load = require('load.js');
 
-const {
-    registerSW,
-    listenSW,
-} = require('./sw/register');
+const {registerSW, listenSW} = require('./sw/register');
 
 const isDev = process.env.NODE_ENV === 'development';
-
-// prevent additional loading of emitify
-window.Emitify = require('emitify');
 
 module.exports = window.CloudCmd = async (config) => {
     window.Util = require('../common/util');
@@ -68,4 +63,3 @@ async function register(config) {
     
     listenSW(sw, 'updatefound', onUpdateFound(config));
 }
-
